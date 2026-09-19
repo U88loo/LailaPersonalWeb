@@ -159,12 +159,12 @@ const LailaAI = (function () {
       {
         name: "education",
         keywords: ["school", "university", "degree", "study", "studying", "education", "gpa", "college"],
-        reply: () => `${siteData.name} is studying ${siteData.education.degree} at ${siteData.education.school} (${siteData.education.period}), GPA ${siteData.education.gpa}.`
+        reply: () => `${siteData.name} holds a ${siteData.education.degree} from ${siteData.education.school} (${siteData.education.period}), graduating in September 2026 with a GPA of ${siteData.education.gpa}.`
       },
       {
         name: "courses",
-        keywords: ["course", "courses", "certificate", "certification", "coursera", "aws", "training"],
-        reply: () => `Some training on record: ${siteData.courses.map((c) => `${c.name} (${c.provider})`).join("; ")}.`
+        keywords: ["course", "courses", "certificate", "certification", "coursera", "aws", "training", "nvidia", "cuda", "mpi", "parallel computing"],
+        reply: () => `Some training on record: ${siteData.courses.map((c) => (c.date ? `${c.name} — ${c.provider}, ${c.date}` : `${c.name} — ${c.provider}`)).join("; ")}.`
       },
       {
         name: "location",

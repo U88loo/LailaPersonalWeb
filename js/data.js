@@ -42,13 +42,38 @@ const siteData = {
 
   courses: [
     {
+      emoji: "🔗",
+      name: "Parallel Computing with MPI",
+      provider: "University of Colorado Boulder (Coursera)",
+      date: "May 2026",
+      url: "https://coursera.org/verify/1PDQ08FBIV1N"
+    },
+    {
+      emoji: "🧵",
+      name: "Concurrent and Parallel Programming in Python",
+      provider: "Packt (Coursera)",
+      date: "May 2026",
+      url: "https://coursera.org/verify/A76BUBP5A4GY"
+    },
+    {
+      emoji: "⚡",
+      name: "Fundamentals of Accelerated Computing with Modern CUDA C++",
+      provider: "NVIDIA",
+      date: "April 2026",
+      url: "https://learn.nvidia.com/certificates?id=AeWgbO8rQTKF3g1XWB2Jmw"
+    },
+    {
+      emoji: "🤖",
       name: "Learn & Build Machine Learning Models with Python",
-      provider: "Coursera",
+      provider: "EDUCBA (Coursera)",
+      date: "March 2026",
       url: "https://coursera.org/verify/15XCOM9O69A8"
     },
     {
+      emoji: "☁️",
       name: "AWS Academy Cloud Foundations",
       provider: "AWS Academy",
+      date: "",
       url: ""
     }
   ],
@@ -77,7 +102,7 @@ const siteData = {
   marquee: [
     "JavaScript", "Java", "Python", "C++", "C#", "Flutter", "HTML/CSS",
     "SQL & MySQL", "Git & GitHub", "UML & System Design", "Software Testing",
-    "AWS Cloud", "Machine Learning"
+    "AWS Cloud", "Machine Learning", "CUDA", "MPI", "Parallel Computing"
   ],
 
   projects: [
@@ -161,6 +186,10 @@ const siteData = {
     { key: "maven", label: "Maven" },
     { key: "aws", label: "AWS" },
     { key: "machine learning", label: "Machine Learning" },
+    { key: "cuda", label: "CUDA" },
+    { key: "mpi", label: "MPI" },
+    { key: "parallel computing", label: "Parallel Computing" },
+    { key: "concurrency", label: "Concurrency" },
     { key: "firebase", label: "Firebase" },
     { key: "ocr", label: "OCR" },
     { key: "json", label: "JSON" }

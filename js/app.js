@@ -103,6 +103,21 @@ function renderContent() {
     </a>
   `).join("");
 
+  // certifications — cards link out to the verification page when there is one
+  const certsGrid = document.getElementById("certs-grid");
+  certsGrid.innerHTML = siteData.courses.map((c) => {
+    const body = `
+      <span class="cert-emoji">${c.emoji}</span>
+      <h3 class="cert-title">${escapeHtml(c.name)}</h3>
+      <p class="cert-provider">${escapeHtml(c.provider)}</p>
+      ${c.date ? `<span class="cert-date">${escapeHtml(c.date)}</span>` : ""}
+      ${c.url ? `<span class="cert-link">verify ↗</span>` : ""}
+    `;
+    return c.url
+      ? `<a class="cert-card" href="${c.url}" target="_blank" rel="noopener">${body}</a>`
+      : `<div class="cert-card">${body}</div>`;
+  }).join("");
+
   // contact links
   const contactLinks = document.getElementById("contact-links");
   contactLinks.innerHTML = siteData.social.map((s) => `
