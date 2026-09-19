@@ -47,6 +47,9 @@ function initProjectModal() {
     panel.scrollTop = 0;
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
+    // pm-open hides the fixed nav / orb / progress bar so nothing can
+    // overlap the popup, whatever the z-index situation is
+    document.body.classList.add("pm-open");
     document.body.style.overflow = "hidden";
     closeBtn.focus();
   }
@@ -56,6 +59,7 @@ function initProjectModal() {
     panel.querySelectorAll("video").forEach((v) => v.pause());
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("pm-open");
     document.body.style.overflow = "";
     panel.innerHTML = "";
     if (lastFocused) lastFocused.focus();

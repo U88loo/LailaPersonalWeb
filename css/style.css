@@ -278,6 +278,11 @@ body.no-custom-cursor .cursor-dot, body.no-custom-cursor .cursor-ring { display:
   background: rgba(14, 6, 18, .55); backdrop-filter: blur(6px);
 }
 .pm-overlay.open { display: flex; animation: pmFade .25s ease; }
+
+/* while the popup is open, get every other fixed-position thing out of its way */
+body.pm-open .nav,
+body.pm-open .ai-orb,
+body.pm-open #scroll-progress { display: none !important; }
 @keyframes pmFade { from { opacity: 0; } to { opacity: 1; } }
 
 .pm-panel {
