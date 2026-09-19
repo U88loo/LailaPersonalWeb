@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/vault.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- Lock screen -->
+<div id="vault-lock" class="vault-lock">
+  <div class="vault-lock-card">
+    <div class="vault-icon">🔒</div>
+    <h1 id="vault-lock-title">Private Vault</h1>
+    <p id="vault-lock-desc">This area is just for Laila. Enter the password to continue.</p>
+    <form id="vault-form">
+      <input id="vault-password" type="password" autocomplete="off" placeholder="Password" />
+      <button id="vault-submit" type="submit" class="btn btn-primary">unlock</button>
+    </form>
+    <p id="vault-error" class="vault-error"></p>
+    <a href="index.html" class="link-btn">← back to the public site</a>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="vault-dashboard" class="vault-dashboard" hidden>
+  <header class="vault-header">
+    <h1>🔒 The Vault</h1>
+    <div class="vault-header-actions">
+      <button id="vault-lock-btn" class="btn btn-outline btn-sm">lock</button>
+      <a href="index.html" class="btn btn-ghost btn-sm">← public site</a>
+    </div>
+  </header>
+  <p class="vault-sub">A private tracker for where your work is actually deployed. Only visible after unlocking, and stored only in this browser.</p>
+
+  <form id="deploy-form" class="deploy-form">
+    <input id="deploy-name" placeholder="Project name" required />
+    <input id="deploy-url" type="url" placeholder="https://..." required />
+    <select id="deploy-status">
+      <option>Live</option>
+      <option>Staging</option>
+      <option>Archived</option>
+    </select>
+    <input id="deploy-notes" placeholder="Notes (optional)" />
+    <button type="submit" class="btn btn-primary btn-sm">add</button>
+  </form>
+
+  <div id="deploy-list" class="deploy-list"></div>
+</div>
+
+<script src="js/particles.js"></script>
+<script src="js/vault.js"></script>
+</body>
+</html>
