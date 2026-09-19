@@ -53,7 +53,7 @@ const LailaAI = (function () {
       {
         name: "availability",
         keywords: ["available", "availability", "hiring", "internship", "open to work", "looking for a job", "job opportunity", "open to opportunities"],
-        reply: () => `Laila is a software engineering student at the University of Bahrain, open to internships and entry-level opportunities. Best way to follow up is ${siteData.email} or WhatsApp.`,
+        reply: () => `Laila graduated with a B.Sc. in Software Engineering from the University of Bahrain in September 2026, and is actively looking for graduate and entry-level roles. Best way to follow up is ${siteData.email} or WhatsApp.`,
         action: () => scrollToSection("contact")
       },
       {
@@ -121,8 +121,8 @@ const LailaAI = (function () {
       },
       {
         name: "graduation",
-        keywords: ["graduate", "graduation", "when will you finish", "finish your degree", "when do you graduate"],
-        reply: () => `Laila started her B.Sc. in Software Engineering at the University of Bahrain in 09/2022 and is still working through it — ask her directly for an expected graduation date.`
+        keywords: ["graduate", "graduation", "when will you finish", "finish your degree", "when do you graduate", "did you graduate", "are you still a student"],
+        reply: () => `Laila graduated in September 2026 with a B.Sc. in Software Engineering from the University of Bahrain, which she started in 09/2022. She finished with a ${siteData.education.gpa} GPA.`
       },
       {
         name: "howAiWorks",

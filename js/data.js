@@ -19,7 +19,7 @@ const siteData = {
   ],
 
   about:
-    "I'm a software engineering student who enjoys working with teams on projects " +
+    "I'm a software engineering graduate who enjoys working with teams on projects " +
     "that actually solve problems. I'm especially drawn to design, testing, and " +
     "artificial intelligence — and how those three can work together in practical " +
     "ways. I like getting into the details: troubleshooting, testing ideas, and " +
@@ -27,7 +27,7 @@ const siteData = {
     "outside my academic field or job scope.",
 
   location: "Riffa, Bahrain",
-  focus: "B.Sc. Software Engineering @ University of Bahrain — exploring where design, testing, and AI overlap",
+  focus: "B.Sc. Software Engineering, University of Bahrain — graduated September 2026. Exploring where design, testing, and AI overlap",
   status: "Currently building: things that (hopefully) don't break in testing 🧪",
 
   email: "Liihj323@gmail.com",
@@ -36,7 +36,7 @@ const siteData = {
   education: {
     degree: "B.Sc. in Software Engineering",
     school: "University of Bahrain",
-    period: "09/2022 - Present",
+    period: "09/2022 - 09/2026",
     gpa: "3.44 / 4"
   },
 
@@ -97,6 +97,14 @@ const siteData = {
       link: "#"
     },
     {
+      emoji: "🔧",
+      title: "YaldaAuto — Shop Management System",
+      description: "Self-hosted system that runs a car-accessories and window-tinting shop end to end — stock with low-stock alerts, sales, customer balances, PDF invoices, and a workshop diary. Money is stored as integer minor units so no total passes through floating point, and the whole UI is localised in English, Arabic and Persian with full right-to-left layout.",
+      tags: ["Node.js", "Express", "SQLite", "i18n / RTL"],
+      badge: "Solo build",
+      link: "#"
+    },
+    {
       emoji: "📚",
       title: "Library Management System",
       description: "Java-based system to manage books, users, and borrowing records — led the team and tested core features.",
@@ -142,6 +150,9 @@ const siteData = {
     { key: "sql", label: "SQL" },
     { key: "mysql", label: "MySQL" },
     { key: "flutter", label: "Flutter" },
+    { key: "node", label: "Node.js" },
+    { key: "express", label: "Express" },
+    { key: "sqlite", label: "SQLite" },
     { key: "git", label: "Git" },
     { key: "github", label: "GitHub" },
     { key: "uml", label: "UML" },
