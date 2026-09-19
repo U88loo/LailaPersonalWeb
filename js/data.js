@@ -111,7 +111,45 @@ const siteData = {
       title: "Dosely — AI Medication Safety Scanner",
       description: "Scan a medicine label and get an instant safe / caution / not-safe verdict, checked against your health profile and explained by Pillo, the AI assistant. Built with AI, OCR, Flutter, and Firebase.",
       tags: ["Flutter", "Firebase", "AI / OCR", "Team Project"],
-      link: "#"
+      link: "#",
+
+      // Having a `details` object turns the card into a case-study popup
+      // instead of a link. Any other project can get one the same way —
+      // every section below is optional.
+      details: {
+        tagline: "Smarter, safer medication — one scan at a time.",
+        role: "Senior project · Team of three · University of Bahrain",
+        overview: [
+          "Ever stared at a medicine label and had no idea what you were reading? Dosely turns that confusion into clarity. Point your camera at any medication and the app reads the label, identifies the drug, and tells you what it treats, how to take it, what the side effects are, and whether it's safe alongside everything else you're already taking.",
+          "It's more than a scanner. Dosely remembers your medical history, learns your routine, and keeps you on track with Pillo — an AI assistant that answers plain-language questions and makes sure a dose never gets missed."
+        ],
+        highlights: [
+          { emoji: "📷", title: "Smart Scan", text: "Google ML Kit reads any prescription label via OCR, then Gemini checks it against your profile." },
+          { emoji: "🛡️", title: "Interaction Shield", text: "Every new medication is cross-checked against your existing ones, flagging dangerous combinations before they happen." },
+          { emoji: "⏰", title: "Schedule & Remind", text: "Custom dose schedules with timezone-aware push notifications." },
+          { emoji: "💬", title: "Chat with Pillo", text: "Ask about side effects, timing, or a missed dose and get answers personalised to your medications." },
+          { emoji: "🔒", title: "Private by default", text: "Conditions, allergies, and history stored securely in Firebase behind App Check." }
+        ],
+        steps: [
+          "Build your profile — conditions, allergies, and current medicines.",
+          "Scan your meds with the camera, prescription or over-the-counter.",
+          "Get instant AI checks on interactions, dosage, and risk.",
+          "Schedule and track doses, and stay consistent."
+        ],
+        stack: [
+          { group: "Framework", items: ["Flutter", "Dart 3.10", "Provider", "Cupertino"] },
+          { group: "AI / ML", items: ["Gemini AI", "Google ML Kit", "OCR"] },
+          { group: "Backend", items: ["Firebase Auth", "Firestore", "Cloud Functions", "App Check", "Node.js 24"] }
+        ],
+        team: ["Eman Al-Asaadi", "Nooralhuda Mansoor", "Laila Haji"],
+        videos: [
+          { src: "assets/dosely.mp4", label: "App demo", length: "1:14" },
+          { src: "assets/dosely-walkthrough.mp4", label: "Full walkthrough", length: "1:46" }
+        ],
+        links: [
+          { label: "Visit the Dosely site", url: "https://u88loo.github.io/dosely-site/" }
+        ]
+      }
     },
     {
       emoji: "🏥",

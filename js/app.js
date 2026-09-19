@@ -19,7 +19,111 @@ document.addEventListener("DOMContentLoaded", () => {
   initVisitTracking();
   initSecretDoorway();
   initButterflies();
+  initProjectModal();
 });
+
+/* ---------------- project case-study popup ----------------
+   A project with a `details` object opens a popup instead of
+   following its link. Every section inside `details` is optional,
+   so other projects can get one by adding the data alone. */
+function initProjectModal() {
+  const overlay = document.getElementById("project-modal");
+  const panel = document.getElementById("pm-body");
+  const closeBtn = document.getElementById("pm-close");
+  let lastFocused = null;
+
+  document.getElementById("projects-grid").addEventListener("click", (e) => {
+    const card = e.target.closest(".project-card");
+    if (!card) return;
+    const project = siteData.projects[Number(card.dataset.project)];
+    if (!project || !project.details) return; // no case study — let the link do its thing
+    e.preventDefault();
+    openModal(project);
+  });
+
+  function openModal(project) {
+    lastFocused = document.activeElement;
+    panel.innerHTML = buildProjectDetails(project);
+    panel.scrollTop = 0;
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    // pause first — clearing the HTML while a video plays can leave audio running
+    panel.querySelectorAll("video").forEach((v) => v.pause());
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    panel.innerHTML = "";
+    if (lastFocused) lastFocused.focus();
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("open")) closeModal();
+  });
+}
+
+function buildProjectDetails(p) {
+  const d = p.details;
+  const block = (title, inner) =>
+    inner ? `<section class="pm-block"><h4 class="pm-h4">${title}</h4>${inner}</section>` : "";
+
+  const videos = (d.videos || []).map((v) => `
+    <figure class="pm-video">
+      <video src="${v.src}" controls preload="metadata" playsinline></video>
+      <figcaption>${escapeHtml(v.label)}${v.length ? ` · ${escapeHtml(v.length)}` : ""}</figcaption>
+    </figure>
+  `).join("");
+
+  const overview = (d.overview || []).map((t) => `<p>${escapeHtml(t)}</p>`).join("");
+
+  const highlights = (d.highlights || []).map((h) => `
+    <li>
+      <span class="pm-hl-emoji">${h.emoji}</span>
+      <div><strong>${escapeHtml(h.title)}</strong><span>${escapeHtml(h.text)}</span></div>
+    </li>
+  `).join("");
+
+  const steps = (d.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+
+  const stack = (d.stack || []).map((g) => `
+    <div class="pm-stack-group">
+      <span class="pm-stack-label">${escapeHtml(g.group)}</span>
+      <div class="pm-chips">${g.items.map((i) => `<span>${escapeHtml(i)}</span>`).join("")}</div>
+    </div>
+  `).join("");
+
+  const team = (d.team || [])
+    .map((m) => `<span class="pm-person">${escapeHtml(m)}</span>`).join("");
+
+  const links = (d.links || []).map((l) =>
+    `<a class="btn btn-primary btn-sm" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`
+  ).join("");
+
+  return `
+    <header class="pm-head">
+      <span class="pm-emoji">${p.emoji}</span>
+      <div>
+        <h3 id="pm-title" class="pm-title">${escapeHtml(p.title)}</h3>
+        ${d.tagline ? `<p class="pm-tagline">${escapeHtml(d.tagline)}</p>` : ""}
+        ${d.role ? `<p class="pm-role">${escapeHtml(d.role)}</p>` : ""}
+      </div>
+    </header>
+    <div class="pm-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>
+    ${links ? `<div class="pm-links">${links}</div>` : ""}
+    ${videos ? `<div class="pm-videos">${videos}</div>` : ""}
+    ${block("What it is", overview)}
+    ${block("What it does", highlights ? `<ul class="pm-highlights">${highlights}</ul>` : "")}
+    ${block("How it works", steps ? `<ol class="pm-steps">${steps}</ol>` : "")}
+    ${block("Built with", stack ? `<div class="pm-stack">${stack}</div>` : "")}
+    ${block("Team", team ? `<div class="pm-team">${team}</div>` : "")}
+  `;
+}
 
 /* ---------------- ambient butterflies ---------------- */
 function initButterflies() {
@@ -92,14 +196,14 @@ function renderContent() {
 
   // projects
   const projectsGrid = document.getElementById("projects-grid");
-  projectsGrid.innerHTML = siteData.projects.map((p) => `
-    <a class="project-card" href="${p.link}" target="${p.link === "#" ? "_self" : "_blank"}" rel="noopener">
+  projectsGrid.innerHTML = siteData.projects.map((p, i) => `
+    <a class="project-card" href="${p.link}" target="${p.link === "#" ? "_self" : "_blank"}" rel="noopener" data-project="${i}">
       ${p.badge ? `<span class="project-sticker"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
       <span class="project-emoji">${p.emoji}</span>
       <h3 class="project-title">${escapeHtml(p.title)}</h3>
       <p class="project-desc">${escapeHtml(p.description)}</p>
       <div class="project-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>
-      <span class="project-link">view project →</span>
+      <span class="project-link">${p.details ? "view case study →" : "view project →"}</span>
     </a>
   `).join("");
 
