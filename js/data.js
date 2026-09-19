@@ -82,7 +82,7 @@ const siteData = {
 
   // TODO: swap in your real GitHub handle
   social: [
-    { label: "GitHub", url: "#", icon: "github" },
+    { label: "GitHub", url: "https://github.com/U88loo", icon: "github" },
     { label: "LinkedIn", url: "https://www.linkedin.com/in/laila-haji-31a6343bb", icon: "linkedin" },
     { label: "Email", url: "mailto:Liihj323@gmail.com", icon: "mail" },
     { label: "WhatsApp", url: "https://wa.me/97332323768", icon: "whatsapp" }
