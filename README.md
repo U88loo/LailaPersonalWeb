@@ -27,8 +27,39 @@ social links, skills, projects, and jokes. Edit that one file first.
 Then:
 - `siteData.resumeUrl` → point it at a real PDF.
 - `siteData.social` → replace the placeholder URLs.
-- `css/style.css` → CSS variables at the top (`--accent-1` etc.) control
-  the whole palette if you want a different vibe than pink/coral/gold.
+- `css/style.css` → the palette lives in the `:root` block at the top.
+
+## Palette
+
+A formal, low-saturation system — one dominant neutral pair, one accent,
+one status colour:
+
+| | Hex | RGB | Job |
+|---|---|---|---|
+| Navy | `#13232F` | 19, 35, 47 | the ink; the ground in dark mode |
+| Bone | `#F4F2ED` | 244, 242, 237 | the paper — warm off-white, never stark |
+| White | `#FFFFFF` | 255, 255, 255 | cards, so they lift off the paper |
+| Brass | `#A77B36` | 167, 123, 54 | the single accent, used sparingly |
+| Sage | `#3F6B52` | 63, 107, 82 | status only — "live / in progress" |
+
+Every other value is a step on one of two ramps: the cool one runs navy →
+slate (`--navy-950` … `--navy-300`), the warm one brass → pale brass. Mid
+steps are fills; the darker steps (`-700`, `-800`) are what text uses, so
+nothing pale ever ends up carrying small type.
+
+The formality comes from restraint rather than from the hues: saturation
+stays low, the accent appears in small doses (kickers, links, rules,
+dots), and **gradients only ever move within one family** — a tonal
+shift, never a rainbow. There are four, split by how much contrast
+whatever sits on top needs: `--grad` (headings), `--grad-cta` (buttons
+and chat bubbles), `--grad-orb` (the hero sphere), `--grad-vivid`
+(decoration with no text on it).
+
+Light mode = bone paper, navy ink. Dark mode inverts it. Components never
+name a raw colour — they use the role tokens (`--ink`, `--surface`,
+`--accent-1…4`, `--signal`, `--on-grad`, `--on-soft`), so changing a brand
+colour in one place re-themes both modes, including the canvas particles
+and the Konami confetti, which read the same tokens from JS.
 
 ## Structure
 

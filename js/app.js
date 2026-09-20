@@ -659,7 +659,12 @@ function initKonami() {
 }
 
 function launchConfetti() {
-  const colors = ["#ec4899", "#fb7185", "#fbbf24", "#fda4af"];
+  // pulled from the palette tokens so confetti matches whatever theme is on
+  const css = getComputedStyle(document.documentElement);
+  const colors = ["--accent-1", "--accent-2", "--accent-3", "--accent-4"]
+    .map((t) => (css.getPropertyValue(t) || "").trim())
+    .filter(Boolean);
+  if (!colors.length) colors.push("#a77b36");
   const count = 90;
   for (let i = 0; i < count; i++) {
     const piece = document.createElement("div");
