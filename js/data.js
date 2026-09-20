@@ -111,6 +111,7 @@ const siteData = {
       title: "Dosely — AI Medication Safety Scanner",
       description: "Scan a medicine label and get an instant safe / caution / not-safe verdict, checked against your health profile and explained by Pillo, the AI assistant. Built with AI, OCR, Flutter, and Firebase.",
       tags: ["Flutter", "Firebase", "AI / OCR", "Team Project"],
+      badge: "University senior project",
       link: "#",
 
       // Having a `details` object turns the card into a case-study popup

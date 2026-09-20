@@ -411,7 +411,10 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
   background: var(--surface); border: 1.5px solid #22c55e; color: #16a34a;
   font-family: var(--font-mono); font-weight: 700; font-size: .68rem; letter-spacing: .02em;
   padding: 6px 12px; border-radius: 999px; transform: rotate(-4deg);
-  box-shadow: var(--shadow-sm); pointer-events: none; white-space: nowrap;
+  box-shadow: var(--shadow-sm); pointer-events: none;
+  /* the card clips its overflow, so a long badge has to wrap rather than run
+     off the edge — the reserved space keeps it clear of the emoji */
+  max-width: calc(100% - 78px); text-align: center; line-height: 1.35;
 }
 :root[data-theme="dark"] .project-sticker { color: #4ade80; }
 .sticker-dot {
