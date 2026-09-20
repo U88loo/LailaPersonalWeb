@@ -86,12 +86,32 @@ function buildProjectDetails(p) {
 
   const overview = (d.overview || []).map((t) => `<p>${escapeHtml(t)}</p>`).join("");
 
-  const highlights = (d.highlights || []).map((h) => `
+  // one bullet list style, shared by `highlights` and any extra `sections`.
+  // `ar` is an optional Arabic name — kept in its own rtl span so the bidi
+  // algorithm can't flip brackets around it when it sits inside English text.
+  const bullets = (list) => (list || []).map((h) => `
     <li>
       <span class="pm-hl-emoji">${h.emoji}</span>
-      <div><strong>${escapeHtml(h.title)}</strong><span>${escapeHtml(h.text)}</span></div>
+      <div>
+        <strong>${escapeHtml(h.title)}</strong>
+        ${h.ar ? `<span class="pm-hl-ar" dir="rtl" lang="ar">${escapeHtml(h.ar)}</span>` : ""}
+        <span>${escapeHtml(h.text)}</span>
+      </div>
     </li>
   `).join("");
+
+  const highlights = bullets(d.highlights);
+
+  const stats = (d.stats || []).map((s) => `
+    <div class="pm-stat"><b>${escapeHtml(s.value)}</b><span>${escapeHtml(s.label)}</span></div>
+  `).join("");
+
+  // free-form extra blocks, rendered with the same heading + bullet styling
+  const sections = (d.sections || []).map((s) => {
+    const intro = s.intro ? `<p>${escapeHtml(s.intro)}</p>` : "";
+    const items = bullets(s.items);
+    return block(s.title, `${intro}${items ? `<ul class="pm-highlights">${items}</ul>` : ""}`);
+  }).join("");
 
   const steps = (d.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
 
@@ -122,8 +142,10 @@ function buildProjectDetails(p) {
     ${links ? `<div class="pm-links">${links}</div>` : ""}
     ${videos ? `<div class="pm-videos">${videos}</div>` : ""}
     ${block("What it is", overview)}
+    ${block("By the numbers", stats ? `<div class="pm-stats">${stats}</div>` : "")}
     ${block("What it does", highlights ? `<ul class="pm-highlights">${highlights}</ul>` : "")}
     ${block("How it works", steps ? `<ol class="pm-steps">${steps}</ol>` : "")}
+    ${sections}
     ${block("Built with", stack ? `<div class="pm-stack">${stack}</div>` : "")}
     ${block("Team", team ? `<div class="pm-team">${team}</div>` : "")}
   `;

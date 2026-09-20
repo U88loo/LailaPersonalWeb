@@ -333,11 +333,27 @@ body.pm-open #scroll-progress { display: none !important; }
 .pm-block p { margin: 0 0 12px; color: var(--ink-faint); line-height: 1.7; }
 .pm-block p:last-child { margin-bottom: 0; }
 
+.pm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); gap: 10px; }
+.pm-stat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 12px; text-align: center;
+}
+.pm-stat b {
+  display: block; font-family: var(--font-mono); font-size: 1.2rem;
+  font-weight: 600; color: var(--accent-1);
+}
+.pm-stat span { display: block; margin-top: 4px; font-size: .72rem; color: var(--ink-faint); line-height: 1.45; }
+
 .pm-highlights { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
 .pm-highlights li { display: flex; gap: 12px; align-items: flex-start; }
 .pm-hl-emoji { font-size: 1.15rem; line-height: 1.4; flex-shrink: 0; }
 .pm-highlights strong { display: block; font-size: .95rem; }
 .pm-highlights span { color: var(--ink-faint); font-size: .9rem; line-height: 1.6; }
+/* optional Arabic name under a bullet title — its own line, so bidi can't
+   reorder it against the surrounding English */
+.pm-highlights .pm-hl-ar {
+  display: block; margin: 1px 0 3px; font-size: .82rem; color: var(--accent-2);
+}
 
 .pm-steps { margin: 0; padding-left: 20px; display: grid; gap: 9px; }
 .pm-steps li { color: var(--ink-faint); line-height: 1.6; }
