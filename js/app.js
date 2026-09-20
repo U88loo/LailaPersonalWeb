@@ -227,18 +227,26 @@ function renderContent() {
     .map((m) => `<span>${escapeHtml(m)} ✦</span>`).join("");
   track.innerHTML = items;
 
-  // projects
+  // projects — a card is only rendered as a link when there's actually
+  // something behind it: a case study to open, or a real URL to visit.
+  // Anything else is a plain div, so no visitor is invited to click a
+  // "view project →" that can't go anywhere.
   const projectsGrid = document.getElementById("projects-grid");
-  projectsGrid.innerHTML = siteData.projects.map((p, i) => `
-    <a class="project-card" href="${p.link}" target="${p.link === "#" ? "_self" : "_blank"}" rel="noopener" data-project="${i}">
+  projectsGrid.innerHTML = siteData.projects.map((p, i) => {
+    const hasUrl = p.link && p.link !== "#";
+    const clickable = !!p.details || hasUrl;
+    const inner = `
       ${p.badge ? `<span class="project-sticker"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
       <span class="project-emoji">${p.emoji}</span>
       <h3 class="project-title">${escapeHtml(p.title)}</h3>
       <p class="project-desc">${escapeHtml(p.description)}</p>
       <div class="project-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>
-      <span class="project-link">${p.details ? "view case study →" : "view project →"}</span>
-    </a>
-  `).join("");
+      ${clickable ? `<span class="project-link">${p.details ? "view case study →" : "view project →"}</span>` : ""}
+    `;
+    return clickable
+      ? `<a class="project-card" href="${p.link}" target="${hasUrl ? "_blank" : "_self"}" rel="noopener" data-project="${i}">${inner}</a>`
+      : `<div class="project-card is-static" data-project="${i}">${inner}</div>`;
+  }).join("");
 
   // certifications — cards link out to the verification page when there is one
   const certsGrid = document.getElementById("certs-grid");
@@ -379,12 +387,12 @@ function initCursor() {
   })();
 
   document.addEventListener("mouseover", (e) => {
-    if (e.target.closest("a, button, input, .project-card, [data-open-ai]")) {
+    if (e.target.closest("a, button, input, .project-card:not(.is-static), [data-open-ai]")) {
       ring.classList.add("hovering");
     }
   });
   document.addEventListener("mouseout", (e) => {
-    if (e.target.closest("a, button, input, .project-card, [data-open-ai]")) {
+    if (e.target.closest("a, button, input, .project-card:not(.is-static), [data-open-ai]")) {
       ring.classList.remove("hovering");
     }
   });

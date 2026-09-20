@@ -399,6 +399,11 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
   content: ""; position: absolute; inset: 0; opacity: 0; background: var(--grad-soft); transition: opacity .3s ease;
 }
 .project-card:hover::before { opacity: 1; }
+/* a card with no case study and no link isn't clickable — drop the lift and
+   the wash so it doesn't pretend otherwise */
+.project-card.is-static { cursor: default; }
+.project-card.is-static:hover { transform: none; box-shadow: var(--shadow-sm); }
+.project-card.is-static:hover::before { opacity: 0; }
 
 .project-sticker {
   position: absolute; top: 16px; right: 16px; z-index: 3;
