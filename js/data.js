@@ -254,7 +254,104 @@ const siteData = {
       description: "Self-hosted system that runs a car-accessories and window-tinting shop end to end — stock with low-stock alerts, sales, customer balances, PDF invoices, and a workshop diary.",
       tags: ["Node.js", "Express", "SQLite", "i18n / RTL"],
       badge: "Live — in use",
-      link: "#"
+      link: "#",
+
+      details: {
+        tagline: "Real money, real stock, three languages — and no rounding errors.",
+        role: "Sole developer · Built for a family-run shop · In daily use",
+        overview: [
+          "A local-first shop management system for a car-accessories and window-tinting business: inventory, point-of-sale, customer accounts with credit balances, an appointment diary, and PDF invoicing — running every day in a real shop.",
+          "It's deliberately small and deliberately strict. The server binds to 127.0.0.1 only, so it's unreachable from the LAN or the internet by design. There's no bundler, no transpiler and no frontend framework — ~9,500 lines of plain Node, EJS and vanilla JavaScript that start instantly and have nothing to rebuild.",
+          "The interesting part isn't the size, it's the correctness. Money is a shop's ground truth, so every decision below is aimed at making sure a total is never wrong, an invoice never changes after it's issued, and stock can never be sold twice."
+        ],
+        stats: [
+          { value: "9.5k", label: "lines of code" },
+          { value: "47", label: "source files" },
+          { value: "8", label: "database tables" },
+          { value: "44", label: "tests, all passing" },
+          { value: "566ms", label: "full test run" },
+          { value: "373", label: "translation keys × 3 locales" },
+          { value: "26", label: "EJS views & partials" },
+          { value: "0", label: "build step — no bundler" }
+        ],
+        highlights: [
+          { emoji: "📦", title: "Inventory", text: "Stock tracking with low-stock alerts, cost prices, and transactional decrements that can't oversell a part." },
+          { emoji: "🧾", title: "Point of sale", text: "Multi-line sales with per-line pricing, suggested prices from what the item last actually sold for, and void-with-restock." },
+          { emoji: "👤", title: "Customer accounts", text: "Running credit balances per customer, with payments allocated across outstanding invoices oldest-first." },
+          { emoji: "📒", title: "Appointment diary", text: "A workshop booking calendar with conflict detection, free-slot search, and per-day load against configurable working hours." },
+          { emoji: "📄", title: "PDF invoicing", text: "Invoices streamed straight to the response with PDFKit, page-break aware, served inline for preview or as a download." },
+          { emoji: "🌍", title: "Three languages, full RTL", text: "English, Arabic and Persian as a shop-level setting, so one till always reads the same way for everyone using it." },
+          { emoji: "💾", title: "Automatic backups", text: "A consistent snapshot taken with SQLite's native backup API while the server is still live-serving — on every startup and on demand." },
+          { emoji: "🌓", title: "Light & dark themes", text: "93 CSS custom properties following OS preference, with a persisted per-browser override and RTL-safe logical properties." }
+        ],
+        sections: [
+          {
+            title: "Architecture",
+            intro: "Strict one-way layering: routes → validation middleware → controllers → services → database. Controllers never touch SQL; the services own every statement and transaction, which is also what makes them testable — the suite calls them directly and skips HTTP entirely. All SQL uses prepared statements built once at module load.",
+            items: []
+          },
+          {
+            title: "Correctness under real money",
+            items: [
+              { emoji: "🔢", title: "Integer-only money arithmetic", text: "Every monetary value is stored and computed as an integer in the currency's smallest unit; conversion to decimal happens only at the display boundary. Decimal places are configurable from 0 to 4, so it handles the Bahraini dinar's three-decimal fils rather than assuming two-decimal cents. No total ever passes through a float." },
+              { emoji: "🔒", title: "Immutable financial history", text: "Sale lines store a snapshot of the product name and unit price at the moment of sale, so renaming a product or selling it at a different price later can never retroactively alter an invoice that's already been issued." },
+              { emoji: "🏷️", title: "Products carry no selling price", text: "A modelling decision: price is an attribute of the sale, not the product, because the same part goes out at different prices depending on customer, quantity and negotiation. The UI compensates by suggesting what the item last actually sold for, falling back to cost price — and a sale is rejected outright if any line lacks a price." },
+              { emoji: "⚔️", title: "Optimistic concurrency on stock", text: "Stock decrement is a conditional UPDATE guarded on the quantity still being available; the service checks whether the row actually changed and aborts the transaction with a 409 if not, so two sales submitted at once can't both claim the last unit. Voiding a sale restores stock inside a transaction." },
+              { emoji: "📚", title: "A payment ledger, not a paid-amount field", text: "Each payment is its own row with amount, method and timestamp, and the service computes a running cumulative-paid and balance-after figure — so an invoice prints the full story of how a bill was settled rather than one collapsed total. Payments against a customer's overall tab are allocated oldest-invoice-first, splitting a single handover of cash across several invoices." }
+            ]
+          },
+          {
+            title: "Security & authentication",
+            items: [
+              { emoji: "🔑", title: "Password handling", text: "bcrypt at cost factor 12. When a username doesn't exist the login path still compares against a dummy hash, so response timing doesn't leak which usernames are valid." },
+              { emoji: "🎫", title: "Single active session", text: "A random 32-byte token is stored in the database and checked on every request, making the database rather than the cookie the source of truth — so a new login silently invalidates the previous session. The session is regenerated on login as a session-fixation defence." },
+              { emoji: "🛡️", title: "Request hardening", text: "Synchronizer-token CSRF on every form, helmet headers, x-powered-by disabled, a 100 kb request body cap, and httpOnly + sameSite cookies on an 8-hour session." },
+              { emoji: "⏱️", title: "Rate limiting", text: "Ten login attempts per fifteen minutes." },
+              { emoji: "🚪", title: "Loopback-only by design", text: "The server binds to 127.0.0.1, so it is not reachable from the LAN or the internet at all — the strongest available answer to remote attack surface on a single-operator till." }
+            ]
+          },
+          {
+            title: "Problems worth solving twice",
+            items: [
+              { emoji: "🗣️", title: "Internationalisation that survives Arabic", text: "373 keys per locale with English fallback, using Intl.PluralRules rather than a count === 1 check, because Arabic has six plural categories. Flash messages are queued as a translation key plus variables and translated at render time, so a message queued in one language never renders stale after a language switch. Dates and numerals deliberately stay Gregorian and Latin in every language, so the screen, the invoices and the database always agree." },
+              { emoji: "🧱", title: "Hand-rolled idempotent migrations", text: "Additive columns are applied behind a schema-inspection guard. One migration needed to drop a column named by a CHECK constraint, which SQLite refuses — implemented as a full table rebuild following SQLite's documented procedure: foreign keys off, rebuild inside a transaction, integrity check, rollback on violation, foreign keys back on. Every migration is a no-op once applied and safe to run on every boot." },
+              { emoji: "🕐", title: "Scheduling that handles midnight", text: "Booking conflicts use interval overlap detection that pulls candidates from the adjacent days, so a job crossing midnight is still caught. Free slots come from a sort-and-merge interval algorithm, so a double-booked hour is never reported as free, and day load is clamped to working hours so an overnight job can't report over 100% utilisation. Appointment times are stored as local wall-clock strings rather than UTC instants — 3pm means 3pm regardless of DST." }
+            ]
+          },
+          {
+            title: "Testing",
+            intro: "44 tests across two files on Node's built-in test runner, with no test-framework dependency — the whole suite runs in 566 ms. They're behavioural domain tests rather than trivial assertions:",
+            items: [
+              { emoji: "↩️", title: "Insufficient stock rolls everything back", text: "The sale throws and leaves both stock and sales untouched." },
+              { emoji: "🚫", title: "An unknown payment method writes nothing", text: "Rejected before any row is created." },
+              { emoji: "👻", title: "Overlapping bookings create no phantom free gap", text: "And a clash is still found across midnight." },
+              { emoji: "📆", title: "Wall-clock arithmetic crosses midnight, months and leap years", text: "Verified rather than assumed." },
+              { emoji: "💵", title: "A bill settled in many small instalments still shows them all", text: "Both in the balance calculation and in the rendered invoice PDF." }
+            ]
+          },
+          {
+            title: "Scope & limits",
+            intro: "Worth being straight about what this system is not — each of these is a documented decision rather than an oversight.",
+            items: [
+              { emoji: "🔤", title: "PDF invoices are English-only", text: "PDFKit's built-in font has no Arabic or Persian glyphs and does no letter-joining or bidi reordering. Recorded as a known limit in the README rather than quietly ignored." },
+              { emoji: "🧪", title: "Tests are service-layer only", text: "No HTTP-level integration tests, no browser or end-to-end tests, and no coverage instrumentation." },
+              { emoji: "🖥️", title: "Single-user and single-machine by design", text: "Not multi-tenant, not horizontally scaled, not cloud-deployed. The concurrency guard defends against double-submits on one till, not against distributed load." },
+              { emoji: "🧰", title: "No CI, Docker, TypeScript or ORM", text: "Raw SQL by choice, and a deployment that's meant to be understood by the person running the shop." }
+            ]
+          }
+        ],
+        stack: [
+          { group: "Runtime", items: ["Node.js", "Express 5", "EJS 6", "dotenv"] },
+          { group: "Data", items: ["SQLite", "better-sqlite3 13", "WAL mode", "Raw SQL", "Prepared statements"] },
+          { group: "Frontend", items: ["Vanilla JavaScript", "Progressive enhancement", "No build step", "93 CSS custom properties"] },
+          { group: "Security", items: ["bcrypt", "helmet", "csrf-sync", "express-session", "express-rate-limit", "Zod 4"] },
+          { group: "Documents", items: ["PDFKit"] },
+          { group: "Localisation", items: ["English", "Arabic", "Persian", "Intl.PluralRules", "Full RTL"] }
+        ],
+        videos: [
+          { src: "assets/Video%20Project%20Yalda.mp4", label: "System walkthrough" }
+        ]
+      }
     },
     {
       emoji: "📚",
