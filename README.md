@@ -9,6 +9,13 @@ in a browser, or serve it with anything static.
   session on load (skip with any key). Replay it anytime from the footer.
 - **Custom cursor** — a lagging ring + dot, disabled automatically on
   touch devices.
+- **The orrery** — the hero centrepiece. An instrument dial (60 tick
+  marks and a slow brass sweep, both drawn as masked conic gradients)
+  around three orbital planes rendered in real 3D: each plane is tilted
+  in the same perspective as the core, so nodes genuinely pass behind
+  the sphere on the far half of every orbit. Pure CSS; the only script
+  is a few degrees of pointer lean. Holds still under
+  `prefers-reduced-motion`.
 - **Generative background** — a lightweight canvas particle field that
   drifts and links nearby nodes, reacting subtly to the mouse.
 - **laila.ai** — a floating command palette (press `Ctrl`/`Cmd + K`, click

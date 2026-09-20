@@ -9,13 +9,13 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Laila Haji — Software Engineer</title>
+<title>Laila Haji · Software Engineer</title>
 <meta name="description" content="Laila Haji's personal corner of the internet. Software engineering graduate focused on design, testing, and AI.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%8B%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=11">
+<link rel="stylesheet" href="css/style.css?v=13">
 </head>
 <body>
 
@@ -24,7 +24,7 @@
   <div class="boot-window">
     <div class="boot-bar">
       <span class="boot-dot r"></span><span class="boot-dot y"></span><span class="boot-dot g"></span>
-      <span class="boot-title">laila.OS — boot log</span>
+      <span class="boot-title">laila.OS · boot log</span>
     </div>
     <pre id="boot-log" class="boot-log"></pre>
     <div class="boot-hint">press any key to skip</div>
@@ -73,7 +73,7 @@
     <div class="hero-text" data-reveal>
       <p class="eyebrow">&lt;hello world/&gt;</p>
       <h1>Hi, I'm <span class="grad-text">Laila</span>.<br>I'm a <span id="typed-role" class="typed-role"></span><span class="caret">|</span></h1>
-      <p class="hero-sub">Software engineering graduate — fresh out of the University of Bahrain as of September 2026 — who cares about design, testing, and AI, and building things that actually solve problems. This site is one of them; the assistant in the corner actually answers questions about me.</p>
+      <p class="hero-sub">Software engineering graduate, fresh out of the University of Bahrain as of September 2026. I care about design, testing, and AI, and about building things that actually solve problems. This site is one of them; the assistant in the corner actually answers questions about me.</p>
       <div class="hero-cta">
         <a href="#work" class="btn btn-primary">see the work</a>
         <button class="btn btn-outline" data-open-ai>ask the AI about me →</button>
@@ -83,16 +83,62 @@
       </div>
     </div>
 
+    <!-- The orrery: three orbital planes in real 3D (nodes pass behind the
+         core), inside an instrument dial with a slow sweep. Decorative —
+         hidden from assistive tech, and it holds still under
+         prefers-reduced-motion. -->
     <div class="hero-visual" data-reveal>
-      <div class="orbit-ring ring-1"></div>
-      <div class="orbit-ring ring-2"></div>
-      <div class="blob">
-        <span class="blob-initial">L</span>
+      <div class="orrery" id="orrery" aria-hidden="true">
+
+        <div class="dial">
+          <span class="dial-ticks"></span>
+          <span class="dial-ticks dial-ticks-major"></span>
+          <span class="dial-edge"></span>
+          <span class="dial-sweep"></span>
+        </div>
+
+        <!-- the core's ambient shadow, kept OUTSIDE the 3D stage on purpose
+             (a blurred shadow inside a preserve-3d subtree rasterises
+             against its square layer bounds and shows as a box) -->
+        <span class="core-shadow"></span>
+
+        <div class="orrery-stage" id="orrery-stage">
+          <div class="plane plane-1">
+            <span class="plane-ring"></span>
+            <span class="plane-spin"><i class="node node-lg"></i></span>
+          </div>
+
+          <div class="plane plane-2">
+            <span class="plane-ring"></span>
+            <span class="plane-spin">
+              <i class="node"></i>
+              <i class="node node-far"></i>
+            </span>
+          </div>
+
+          <div class="plane plane-3">
+            <span class="plane-ring"></span>
+            <span class="plane-spin">
+              <i class="node node-wing">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M32 30 C20 6 2 10 6 26 C9 38 24 34 32 30 Z"/>
+                  <path d="M32 30 C44 6 62 10 58 26 C55 38 40 34 32 30 Z"/>
+                  <path d="M32 32 C22 50 6 54 8 44 C10 36 24 34 32 32 Z"/>
+                  <path d="M32 32 C42 50 58 54 56 44 C54 36 40 34 32 32 Z"/>
+                  <rect x="30.5" y="25" width="3" height="17" rx="1.5"/>
+                </svg>
+              </i>
+            </span>
+          </div>
+
+          <div class="core">
+            <span class="core-halo"></span>
+            <span class="core-halo core-halo-2"></span>
+            <span class="core-mark">L</span>
+          </div>
+        </div>
+
       </div>
-      <div class="orbit-chip chip-1">🦋</div>
-      <div class="orbit-chip chip-2">🌸</div>
-      <div class="orbit-chip chip-3">🧠</div>
-      <div class="orbit-chip chip-4">💫</div>
     </div>
 
     <button class="scroll-cue" id="scroll-cue" aria-label="Scroll down">
@@ -102,16 +148,16 @@
 
   <!-- ABOUT -->
   <section id="about" class="section">
-    <p class="section-kicker" data-reveal>01 — about</p>
+    <p class="section-kicker" data-reveal>01 · about</p>
     <div class="about-grid">
       <h2 class="about-lead" data-reveal>
-        I like software that feels a little <em>alive</em> — interfaces with
+        I like software that feels a little <em>alive</em>: interfaces with
         personality, details you notice on the second visit, and code that's
         honest about what it's doing.
       </h2>
       <div class="about-body" data-reveal>
         <p id="about-text">
-          This is placeholder bio copy — open <code>js/data.js</code> and edit
+          This is placeholder bio copy. Open <code>js/data.js</code> and edit
           <code>siteData.about</code> to make it yours. Talk about what you
           build, what you're curious about, and what you're currently
           leveling up in.
@@ -128,7 +174,7 @@
 
   <!-- SKILLS -->
   <section id="skills" class="section">
-    <p class="section-kicker" data-reveal>02 — skills</p>
+    <p class="section-kicker" data-reveal>02 · skills</p>
     <h2 class="section-title" data-reveal>Tools I reach for</h2>
     <div id="skills-grid" class="skills-grid" data-reveal></div>
     <div class="marquee" data-reveal>
@@ -138,24 +184,24 @@
 
   <!-- PROJECTS -->
   <section id="work" class="section">
-    <p class="section-kicker" data-reveal>03 — selected work</p>
+    <p class="section-kicker" data-reveal>03 · selected work</p>
     <h2 class="section-title" data-reveal>Things I've shipped</h2>
     <div id="projects-grid" class="projects-grid" data-reveal></div>
   </section>
 
   <!-- CERTIFICATIONS -->
   <section id="certs" class="section">
-    <p class="section-kicker" data-reveal>04 — certifications</p>
+    <p class="section-kicker" data-reveal>04 · certifications</p>
     <h2 class="section-title" data-reveal>Proof I did the reading</h2>
     <div id="certs-grid" class="certs-grid" data-reveal></div>
   </section>
 
   <!-- CONTACT -->
   <section id="contact" class="section contact-section">
-    <p class="section-kicker" data-reveal>05 — contact</p>
+    <p class="section-kicker" data-reveal>05 · contact</p>
     <h2 class="section-title" data-reveal>Let's build something.</h2>
     <p class="contact-sub" data-reveal>
-      Fastest way in is the assistant — press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd>
+      Fastest way in is the assistant: press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd>
       and ask it for my email. Or just use the old-fashioned links below.
     </p>
     <div class="contact-links" id="contact-links" data-reveal></div>
@@ -180,7 +226,7 @@
       <span class="ai-avatar">🧠</span>
       <div>
         <div class="ai-panel-title">laila.ai <span class="ai-live">● online</span></div>
-        <div class="ai-panel-sub">ask me anything about Laila — try "who is laila" or "surprise me"</div>
+        <div class="ai-panel-sub">ask me anything about Laila. Try "who is laila" or "surprise me"</div>
       </div>
       <button id="ai-voice-toggle" class="icon-btn" title="Toggle spoken replies" aria-label="Toggle voice replies">🔇</button>
       <button id="ai-close" class="icon-btn" aria-label="Close">✕</button>
@@ -206,9 +252,9 @@
 
 <!-- ?v= is a cache-buster: bump it after editing any of these so browsers
      fetch the new file instead of serving a stale copy. -->
-<script src="js/data.js?v=11"></script>
-<script src="js/particles.js?v=11"></script>
-<script src="js/ai-assistant.js?v=11"></script>
-<script src="js/app.js?v=11"></script>
+<script src="js/data.js?v=13"></script>
+<script src="js/particles.js?v=13"></script>
+<script src="js/ai-assistant.js?v=13"></script>
+<script src="js/app.js?v=13"></script>
 </body>
 </html>

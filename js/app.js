@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initVisitTracking();
   initSecretDoorway();
   initButterflies();
+  initOrrery();
   initProjectModal();
 });
 
@@ -158,6 +159,42 @@ function buildProjectDetails(p) {
   `;
 }
 
+/* ---------------- orrery: pointer parallax ----------------
+   The hero orrery is pure CSS; this only leans the whole 3D stage a few
+   degrees toward the cursor so the depth reads as depth. Pointer-only —
+   touch devices and reduced-motion users get the static tilt. */
+function initOrrery() {
+  const orrery = document.getElementById("orrery");
+  const stage = document.getElementById("orrery-stage");
+  if (!orrery || !stage) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+
+  const MAX = 9; // degrees
+  let frame;
+
+  function lean(e) {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = null;
+      const box = orrery.getBoundingClientRect();
+      // -1 … 1 relative to the orrery's centre, damped past its own bounds
+      const dx = (e.clientX - (box.left + box.width / 2)) / (box.width * 1.6);
+      const dy = (e.clientY - (box.top + box.height / 2)) / (box.height * 1.6);
+      const clamp = (n) => Math.max(-1, Math.min(1, n));
+      stage.style.setProperty("--ty", (clamp(dx) * MAX).toFixed(2) + "deg");
+      stage.style.setProperty("--tx", (clamp(-dy) * MAX).toFixed(2) + "deg");
+    });
+  }
+
+  window.addEventListener("mousemove", lean, { passive: true });
+  window.addEventListener("mouseout", (e) => {
+    if (e.relatedTarget) return;         // still inside the document
+    stage.style.setProperty("--ty", "0deg");
+    stage.style.setProperty("--tx", "0deg");
+  });
+}
+
 /* ---------------- ambient butterflies ---------------- */
 function initButterflies() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -204,7 +241,7 @@ function initVisitTracking() {
 
 /* ---------------- render data-driven content ---------------- */
 function renderContent() {
-  document.title = `${siteData.fullName || siteData.name} — Software Engineer`;
+  document.title = `${siteData.fullName || siteData.name} · Software Engineer`;
   document.getElementById("about-text").textContent = siteData.about;
   document.getElementById("about-location").textContent = siteData.location;
   document.getElementById("about-focus").textContent = siteData.focus;
@@ -548,7 +585,7 @@ function initAI() {
     overlay.setAttribute("aria-hidden", "false");
     setTimeout(() => input.focus(), 200);
     if (!thread.dataset.greeted) {
-      addMessage("bot", `Hey, I'm laila.ai. Ask me anything about ${siteData.name} — or tap a suggestion below.`);
+      addMessage("bot", `Hey, I'm laila.ai. Ask me anything about ${siteData.name}, or tap a suggestion below.`);
       thread.dataset.greeted = "1";
     }
   }

@@ -37,18 +37,18 @@ const LailaAI = (function () {
       {
         name: "dosely",
         keywords: ["dosely", "pillo", "medication", "medicine app", "medicine scanner"],
-        reply: () => `Dosely is an AI-powered medication safety app — scan a medicine and it reads the label via OCR, cross-checks verified databases, and checks it against your health profile for a safe / caution / not-safe verdict, explained by Pillo, its AI assistant. Built with Flutter and Firebase as a team project at University of Bahrain.`,
+        reply: () => `Dosely is an AI-powered medication safety app: scan a medicine and it reads the label via OCR, cross-checks verified databases, and checks it against your health profile for a safe / caution / not-safe verdict, explained by Pillo, its AI assistant. Built with Flutter and Firebase as a team project at University of Bahrain.`,
         action: () => scrollToSection("work")
       },
       {
         name: "pitch",
         keywords: ["how can laila help", "help us", "why hire", "why should we hire", "what can you do for us", "hire laila", "pitch me"],
-        reply: () => `Laila brings solid engineering fundamentals (Java, JavaScript, Python, SQL), strong software design and testing habits, and genuine curiosity about AI — plus she's led a project team before and picks up new tools fast. If you need someone who cares about getting the details right, that's her pitch. Ask about her skills or projects for specifics.`
+        reply: () => `Laila brings solid engineering fundamentals (Java, JavaScript, Python, SQL), strong software design and testing habits, and genuine curiosity about AI, plus she's led a project team before and picks up new tools fast. If you need someone who cares about getting the details right, that's her pitch. Ask about her skills or projects for specifics.`
       },
       {
         name: "strengths",
         keywords: ["strength", "strengths", "superpower", "what are you great at", "greatest strength"],
-        reply: () => `Attention to detail and a testing mindset — Laila likes taking things apart, in code and in medicine boxes apparently, to understand exactly how they work and where they might break.`
+        reply: () => `Attention to detail and a testing mindset. Laila likes taking things apart, in code and in medicine boxes apparently, to understand exactly how they work and where they might break.`
       },
       {
         name: "availability",
@@ -59,40 +59,40 @@ const LailaAI = (function () {
       {
         name: "freelance",
         keywords: ["freelance", "freelancing", "contract work", "side project help", "can you build me"],
-        reply: () => `For freelance or project-based work, reach out directly at ${siteData.email} or WhatsApp and describe what you need — Laila will let you know if it's a fit.`,
+        reply: () => `For freelance or project-based work, reach out directly at ${siteData.email} or WhatsApp and describe what you need, and Laila will let you know if it's a fit.`,
         action: () => scrollToSection("contact")
       },
       {
         name: "remote",
         keywords: ["remote", "relocate", "relocation", "work from home", "onsite", "in person"],
-        reply: () => `Laila is based in ${siteData.location} and open to remote or local opportunities — ask directly about relocation for anything further out.`
+        reply: () => `Laila is based in ${siteData.location} and open to remote or local opportunities. Ask directly about relocation for anything further out.`
       },
       {
         name: "favoriteProject",
         keywords: ["favorite project", "favourite project", "proudest", "best project", "most proud"],
-        reply: () => `Probably Dosely — turning "is this medicine safe for me?" into an actual working AI-powered answer, built with a team from scratch, is hard to top.`,
+        reply: () => `Probably Dosely. Turning "is this medicine safe for me?" into an actual working AI-powered answer, built with a team from scratch, is hard to top.`,
         action: () => scrollToSection("work")
       },
       {
         name: "leadership",
         keywords: ["leadership", "team player", "lead a team", "teamwork example", "led a project"],
-        reply: () => `Yes — Laila led the team on the Library Management System project, and collaborated closely across every project listed, including a 3-person AI team for Dosely.`
+        reply: () => `Yes. Laila led the team on the Library Management System project, and collaborated closely across every project listed, including a 3-person AI team for Dosely.`
       },
       {
         name: "testingDetail",
         keywords: ["testing experience", "manual testing", "black box", "white box", "qa experience", "quality assurance"],
-        reply: () => `Testing is one of Laila's strongest interests — manual testing, static & dynamic testing, black-box and white-box methods, plus unit testing with JUnit and Maven.`
+        reply: () => `Testing is one of Laila's strongest interests: manual testing, static & dynamic testing, black-box and white-box methods, plus unit testing with JUnit and Maven.`
       },
       {
         name: "aiDetail",
         keywords: ["machine learning experience", "ai experience", "artificial intelligence experience", "ml experience"],
-        reply: () => `Laila completed a "Learn & Build Machine Learning Models with Python" course on Coursera, and put AI into practice building Dosely — an AI + OCR medication safety scanner with a built-in chat assistant, Pillo.`,
+        reply: () => `Laila completed a "Learn & Build Machine Learning Models with Python" course on Coursera, and put AI into practice building Dosely, an AI + OCR medication safety scanner with a built-in chat assistant, Pillo.`,
         action: () => scrollToSection("work")
       },
       {
         name: "flutter",
         keywords: ["flutter", "mobile app", "mobile development", "ios app", "android app"],
-        reply: () => `Yes — Flutter and Firebase power Dosely, Laila's AI medication-scanning mobile app.`
+        reply: () => `Yes. Flutter and Firebase power Dosely, Laila's AI medication-scanning mobile app.`
       },
       {
         name: "databaseDetail",
@@ -107,7 +107,7 @@ const LailaAI = (function () {
       {
         name: "favoriteTech",
         keywords: ["favorite language", "favourite language", "favorite tech", "favorite tool"],
-        reply: () => `Hard to pin down — but Java and JavaScript get the most love, going by her skill levels.`
+        reply: () => `Hard to pin down, but Java and JavaScript get the most love, going by her skill levels.`
       },
       {
         name: "doselySupervisor",
@@ -127,7 +127,7 @@ const LailaAI = (function () {
       {
         name: "howAiWorks",
         keywords: ["how do you work", "are you rule based", "how were you built", "how were you made", "are you an api"],
-        reply: () => `I'm a small keyword-matching engine living entirely in this browser tab — no API calls, no data leaving this page. Laila built me as part of this site. Ask something and I'll do my best to match it.`
+        reply: () => `I'm a small keyword-matching engine living entirely in this browser tab: no API calls, no data leaving this page. Laila built me as part of this site. Ask something and I'll do my best to match it.`
       },
       {
         name: "helpCommands",
@@ -137,7 +137,7 @@ const LailaAI = (function () {
       {
         name: "farewell",
         keywords: ["bye", "goodbye", "see you", "later", "farewell"],
-        reply: () => `Thanks for stopping by! Feel free to reach out at ${siteData.email} — good luck out there.`
+        reply: () => `Thanks for stopping by! Feel free to reach out at ${siteData.email}. Good luck out there.`
       },
       {
         name: "contact",
@@ -148,7 +148,7 @@ const LailaAI = (function () {
       {
         name: "whatsapp",
         keywords: ["whatsapp", "whats app", "phone", "number", "call", "text"],
-        reply: () => `You can WhatsApp ${siteData.name} at ${siteData.whatsapp} — there's a WhatsApp button in the contact section too.`,
+        reply: () => `You can WhatsApp ${siteData.name} at ${siteData.whatsapp}. There's a WhatsApp button in the contact section too.`,
         action: () => scrollToSection("contact")
       },
       {
@@ -164,7 +164,7 @@ const LailaAI = (function () {
       {
         name: "courses",
         keywords: ["course", "courses", "certificate", "certification", "coursera", "aws", "training", "nvidia", "cuda", "mpi", "parallel computing"],
-        reply: () => `Some training on record: ${siteData.courses.map((c) => (c.date ? `${c.name} — ${c.provider}, ${c.date}` : `${c.name} — ${c.provider}`)).join("; ")}.`
+        reply: () => `Some training on record: ${siteData.courses.map((c) => (c.date ? `${c.name} · ${c.provider}, ${c.date}` : `${c.name} · ${c.provider}`)).join("; ")}.`
       },
       {
         name: "location",
@@ -176,7 +176,7 @@ const LailaAI = (function () {
         keywords: ["dark mode", "light mode", "theme", "dark", "light"],
         reply: () => {
           toggleThemeFromAI();
-          return `Done — flipped the theme for you. Try asking me to switch it back.`;
+          return `Done. Flipped the theme for you. Try asking me to switch it back.`;
         }
       },
       {
@@ -195,7 +195,7 @@ const LailaAI = (function () {
       {
         name: "sentience",
         keywords: ["real ai", "sentient", "conscious", "chatgpt", "llm", "gpt", "are you ai"],
-        reply: () => "I'm honest labor, not a large language model — just a keyword matcher wearing a nice UI. Ask me something and I'll do my best."
+        reply: () => "I'm honest labor, not a large language model, just a keyword matcher wearing a nice UI. Ask me something and I'll do my best."
       },
       {
         name: "thanks",
@@ -205,7 +205,7 @@ const LailaAI = (function () {
       {
         name: "jdMatch",
         keywords: ["job description", "match me against", "how well do i match", "does laila fit", "does laila match", "compare to this role", "skill match", "fit this role", "requirements for this role"],
-        reply: (raw) => matchJD(raw) || `Paste a job description or a list of required skills and I'll scan it against Laila's actual stack — I also recognize Ruby, Go, Rust, Kotlin, Swift, TypeScript, and a bunch of others, even ones she doesn't know yet.`
+        reply: (raw) => matchJD(raw) || `Paste a job description or a list of required skills and I'll scan it against Laila's actual stack. I also recognize Ruby, Go, Rust, Kotlin, Swift, TypeScript, and a bunch of others, even ones she doesn't know yet.`
       },
       {
         name: "weather",
@@ -218,7 +218,7 @@ const LailaAI = (function () {
         reply: () => {
           const btn = document.getElementById("ai-voice-toggle");
           if (btn) btn.click();
-          return `Voice toggled — watch the speaker icon in the header. If your browser supports speech synthesis, I'll start talking out loud.`;
+          return `Voice toggled. Watch the speaker icon in the header. If your browser supports speech synthesis, I'll start talking out loud.`;
         }
       },
       {
@@ -276,11 +276,11 @@ const LailaAI = (function () {
 
     const total = siteData.techKnown.length;
     const pct = Math.round((known.length / total) * 100);
-    let msg = `🔍 Scanned that against Laila's stack — matched: ${known.length ? known.map((t) => t.label).join(", ") : "nothing yet"} (${known.length}/${total} tracked skills, ~${pct}% overlap).`;
+    let msg = `🔍 Scanned that against Laila's stack. Matched: ${known.length ? known.map((t) => t.label).join(", ") : "nothing yet"} (${known.length}/${total} tracked skills, ~${pct}% overlap).`;
     if (other.length) {
-      msg += ` Also spotted ${other.map((t) => t.label).join(", ")} in there — not on her stack today, but she picks up new languages fast.`;
+      msg += ` Also spotted ${other.map((t) => t.label).join(", ")} in there. Not on her stack today, but she picks up new languages fast.`;
     }
-    msg += ` Worth a real conversation — check the contact section.`;
+    msg += ` Worth a real conversation: check the contact section.`;
     return msg;
   }
 
@@ -302,7 +302,7 @@ const LailaAI = (function () {
       const desc = WEATHER_CODES[cw.weathercode] || "unusual weather";
       return `🌤️ Live right now in Bahrain (near Riffa): ${cw.temperature}°C, ${desc}, wind ${cw.windspeed} km/h. That's a real fetch to a live weather API, not a canned answer.`;
     } catch (e) {
-      return "Couldn't reach the live weather feed just now — might be offline. Try again in a bit.";
+      return "Couldn't reach the live weather feed just now. It might be offline. Try again in a bit.";
     }
   }
 
@@ -368,7 +368,7 @@ const LailaAI = (function () {
     const lang = navigator.language || "an unknown language";
     const cores = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} CPU cores` : null;
     const colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    let ref = "a direct visit — no referrer";
+    let ref = "a direct visit, no referrer";
     try { ref = document.referrer ? new URL(document.referrer).hostname : ref; } catch (e) { /* ignore */ }
     const secondsHere = Math.max(1, Math.round(performance.now() / 1000));
     const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -376,25 +376,25 @@ const LailaAI = (function () {
     const visits = parseInt(localStorage.getItem("laila-visit-count") || "1", 10);
 
     const lines = [
-      `⏱️ It's ${visitorTime} your time (${visitorTZ}) — ${bahrainTime} in Bahrain, where Laila is.`,
-      `💻 ${browser} on ${os}, ${deviceType} — screen ${screenInfo}, viewport ${viewportInfo}.`,
+      `⏱️ It's ${visitorTime} your time (${visitorTZ}), and ${bahrainTime} in Bahrain, where Laila is.`,
+      `💻 ${browser} on ${os}, ${deviceType}. Screen ${screenInfo}, viewport ${viewportInfo}.`,
       `🌐 Language: ${lang}${cores ? " · " + cores : ""} · you seem to prefer ${colorScheme} mode.`,
       `🔗 You got here via: ${ref}.`,
       `📜 ${secondsHere}s on this page so far, scrolled ${scrollPct}%.`
     ];
-    if (visits > 1) lines.push(`👋 This looks like visit #${visits} from this browser — I remember, locally, on your device only.`);
+    if (visits > 1) lines.push(`👋 This looks like visit #${visits} from this browser. I remember, locally, on your device only.`);
 
     const place = await tryGeolocate();
     if (place) lines.push(`📍 And since you allowed it: you're near ${place}.`);
 
-    lines.push(`\nAll of that is standard browser info (plus location only if you just approved the permission prompt) — nothing leaves this page or gets stored anywhere except that visit counter, which lives only in your browser's local storage.`);
+    lines.push(`\nAll of that is standard browser info (plus location only if you just approved the permission prompt). Nothing leaves this page or gets stored anywhere except that visit counter, which lives only in your browser's local storage.`);
 
     return lines.join("\n");
   }
 
   function respond(message) {
     const text = message.toLowerCase().trim();
-    if (!text) return "Ask me something — try \"who is Laila\" or \"show me projects\".";
+    if (!text) return "Ask me something. Try \"who is Laila\" or \"show me projects\".";
 
     const mathResult = tryMath(message);
     if (mathResult !== null) return mathResult;
@@ -426,7 +426,7 @@ const LailaAI = (function () {
       if (jd) return jd;
     }
 
-    return `I didn't quite catch that. Try asking about ${siteData.name}'s skills, projects, or how to get in touch — paste a job description, ask me a math question, or say "surprise me".`;
+    return `I didn't quite catch that. Try asking about ${siteData.name}'s skills, projects, or how to get in touch. Paste a job description, ask me a math question, or say "surprise me".`;
   }
 
   // ---- Optional: wire this up to a real model later ----
