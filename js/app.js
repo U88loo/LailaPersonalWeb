@@ -36,7 +36,14 @@ function initProjectModal() {
     const card = e.target.closest(".project-card");
     if (!card) return;
     const project = siteData.projects[Number(card.dataset.project)];
-    if (!project || !project.details) return; // no case study — let the link do its thing
+    if (!project) return;
+
+    // `link: "#"` is a placeholder, not a destination — following it would
+    // scroll the page back to the top, so stop it whether or not there's a
+    // case study to open in its place.
+    if (!project.link || project.link === "#") e.preventDefault();
+
+    if (!project.details) return; // real link — let it do its thing
     e.preventDefault();
     openModal(project);
   });
