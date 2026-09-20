@@ -251,7 +251,7 @@ const siteData = {
     {
       emoji: "🔧",
       title: "YaldaAuto — Shop Management System",
-      description: "Self-hosted system that runs a car-accessories and window-tinting shop end to end — stock with low-stock alerts, sales, customer balances, PDF invoices, and a workshop diary. Money is stored as integer minor units so no total passes through floating point, and the whole UI is localised in English, Arabic and Persian with full right-to-left layout.",
+      description: "Self-hosted system that runs a car-accessories and window-tinting shop end to end — stock with low-stock alerts, sales, customer balances, PDF invoices, and a workshop diary.",
       tags: ["Node.js", "Express", "SQLite", "i18n / RTL"],
       badge: "Live — in use",
       link: "#"
