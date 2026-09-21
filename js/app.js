@@ -3,11 +3,13 @@
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+  I18N.init();          // must run first: everything below reads through it
   renderContent();
   initBootSequence();
   initCursor();
   initNav();
   initTheme();
+  initLanguage();
   initTypedRole();
   initScrollReveal();
   initScrollProgress();
@@ -23,6 +25,22 @@ document.addEventListener("DOMContentLoaded", () => {
   initProjectModal();
 });
 
+/* ---------------- language toggle ----------------
+   I18N.applyDom() has already handled every [data-i18n] string in
+   index.html by the time listeners fire; what's left is the markup
+   app.js generated itself, plus the two loops that captured their
+   text when they started. */
+function initLanguage() {
+  const btn = document.getElementById("lang-toggle");
+  if (btn) btn.addEventListener("click", () => I18N.toggle());
+
+  I18N.onChange(() => {
+    renderContent();
+    initTypedRole();   // restartable — cancels the running loop first
+    initSkillBars();   // the bars were just replaced, so re-observe them
+  });
+}
+
 /* ---------------- project case-study popup ----------------
    A project with a `details` object opens a popup instead of
    following its link. Every section inside `details` is optional,
@@ -32,11 +50,13 @@ function initProjectModal() {
   const panel = document.getElementById("pm-body");
   const closeBtn = document.getElementById("pm-close");
   let lastFocused = null;
+  let openIndex = null;
 
   document.getElementById("projects-grid").addEventListener("click", (e) => {
     const card = e.target.closest(".project-card");
     if (!card) return;
-    const project = siteData.projects[Number(card.dataset.project)];
+    const index = Number(card.dataset.project);
+    const project = I18N.data().projects[index];
     if (!project) return;
 
     // `link: "#"` is a placeholder, not a destination — following it would
@@ -46,12 +66,22 @@ function initProjectModal() {
 
     if (!project.details) return; // real link — let it do its thing
     e.preventDefault();
-    openModal(project);
+    openModal(index);
   });
 
-  function openModal(project) {
+  // a case study open when the language flips gets rebuilt in place, so the
+  // reader keeps their spot instead of being dropped back to the grid
+  I18N.onChange(() => {
+    if (openIndex === null) return;
+    const scrolled = panel.scrollTop;
+    panel.innerHTML = buildProjectDetails(I18N.data().projects[openIndex]);
+    panel.scrollTop = scrolled;
+  });
+
+  function openModal(index) {
+    openIndex = index;
     lastFocused = document.activeElement;
-    panel.innerHTML = buildProjectDetails(project);
+    panel.innerHTML = buildProjectDetails(I18N.data().projects[index]);
     panel.scrollTop = 0;
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
@@ -63,6 +93,7 @@ function initProjectModal() {
   }
 
   function closeModal() {
+    openIndex = null;
     // pause first — clearing the HTML while a video plays can leave audio running
     panel.querySelectorAll("video").forEach((v) => v.pause());
     overlay.classList.remove("open");
@@ -149,13 +180,13 @@ function buildProjectDetails(p) {
     <div class="pm-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>
     ${links ? `<div class="pm-links">${links}</div>` : ""}
     ${videos ? `<div class="pm-videos">${videos}</div>` : ""}
-    ${block("What it is", overview)}
-    ${block("By the numbers", stats ? `<div class="pm-stats">${stats}</div>` : "")}
-    ${block("What it does", highlights ? `<ul class="pm-highlights">${highlights}</ul>` : "")}
-    ${block("How it works", steps ? `<ol class="pm-steps">${steps}</ol>` : "")}
+    ${block(I18N.t("pm.whatItIs"), overview)}
+    ${block(I18N.t("pm.numbers"), stats ? `<div class="pm-stats">${stats}</div>` : "")}
+    ${block(I18N.t("pm.whatItDoes"), highlights ? `<ul class="pm-highlights">${highlights}</ul>` : "")}
+    ${block(I18N.t("pm.howItWorks"), steps ? `<ol class="pm-steps">${steps}</ol>` : "")}
     ${sections}
-    ${block("Built with", stack ? `<div class="pm-stack">${stack}</div>` : "")}
-    ${block("Team", team ? `<div class="pm-team">${team}</div>` : "")}
+    ${block(I18N.t("pm.builtWith"), stack ? `<div class="pm-stack">${stack}</div>` : "")}
+    ${block(I18N.t("pm.team"), team ? `<div class="pm-team">${team}</div>` : "")}
   `;
 }
 
@@ -241,17 +272,24 @@ function initVisitTracking() {
 
 /* ---------------- render data-driven content ---------------- */
 function renderContent() {
-  document.title = `${siteData.fullName || siteData.name} · Software Engineer`;
-  document.getElementById("about-text").textContent = siteData.about;
-  document.getElementById("about-location").textContent = siteData.location;
-  document.getElementById("about-focus").textContent = siteData.focus;
-  document.getElementById("about-status").textContent = siteData.status;
-  document.getElementById("resume-link").href = siteData.resumeUrl;
-  document.getElementById("footer-year").textContent = new Date().getFullYear();
+  const D = I18N.data();
+
+  document.title = I18N.t("doc.title", { name: D.fullName || D.name });
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.setAttribute("content", I18N.t("doc.description"));
+
+  document.getElementById("hero-name").textContent = D.name;
+  document.getElementById("about-text").textContent = D.about;
+  document.getElementById("about-location").textContent = D.location;
+  document.getElementById("about-focus").textContent = D.focus;
+  document.getElementById("about-status").textContent = D.status;
+  document.getElementById("resume-link").href = D.resumeUrl;
+  document.getElementById("footer-text").textContent =
+    I18N.t("footer.text", { year: new Date().getFullYear() });
 
   // skills
   const skillsGrid = document.getElementById("skills-grid");
-  skillsGrid.innerHTML = siteData.skills.map((s) => `
+  skillsGrid.innerHTML = D.skills.map((s) => `
     <div class="skill-card">
       <div class="skill-top"><span class="skill-name">${escapeHtml(s.name)}</span><span class="skill-pct">${s.level}%</span></div>
       <div class="skill-bar"><div class="skill-fill" data-level="${s.level}"></div></div>
@@ -260,7 +298,7 @@ function renderContent() {
 
   // marquee
   const track = document.getElementById("marquee-track");
-  const items = [...siteData.marquee, ...siteData.marquee]
+  const items = [...D.marquee, ...D.marquee]
     .map((m) => `<span>${escapeHtml(m)} ✦</span>`).join("");
   track.innerHTML = items;
 
@@ -269,7 +307,7 @@ function renderContent() {
   // Anything else is a plain div, so no visitor is invited to click a
   // "view project →" that can't go anywhere.
   const projectsGrid = document.getElementById("projects-grid");
-  projectsGrid.innerHTML = siteData.projects.map((p, i) => {
+  projectsGrid.innerHTML = D.projects.map((p, i) => {
     const hasUrl = p.link && p.link !== "#";
     const clickable = !!p.details || hasUrl;
     const inner = `
@@ -278,7 +316,7 @@ function renderContent() {
       <h3 class="project-title">${escapeHtml(p.title)}</h3>
       <p class="project-desc">${escapeHtml(p.description)}</p>
       <div class="project-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>
-      ${clickable ? `<span class="project-link">${p.details ? "view case study →" : "view project →"}</span>` : ""}
+      ${clickable ? `<span class="project-link">${escapeHtml(I18N.t(p.details ? "card.caseStudy" : "card.project"))}</span>` : ""}
     `;
     return clickable
       ? `<a class="project-card" href="${p.link}" target="${hasUrl ? "_blank" : "_self"}" rel="noopener" data-project="${i}">${inner}</a>`
@@ -287,13 +325,13 @@ function renderContent() {
 
   // certifications — cards link out to the verification page when there is one
   const certsGrid = document.getElementById("certs-grid");
-  certsGrid.innerHTML = siteData.courses.map((c) => {
+  certsGrid.innerHTML = D.courses.map((c) => {
     const body = `
       <span class="cert-emoji">${c.emoji}</span>
       <h3 class="cert-title">${escapeHtml(c.name)}</h3>
       <p class="cert-provider">${escapeHtml(c.provider)}</p>
       ${c.date ? `<span class="cert-date">${escapeHtml(c.date)}</span>` : ""}
-      ${c.url ? `<span class="cert-link">verify ↗</span>` : ""}
+      ${c.url ? `<span class="cert-link">${escapeHtml(I18N.t("cert.verify"))}</span>` : ""}
     `;
     return c.url
       ? `<a class="cert-card" href="${c.url}" target="_blank" rel="noopener">${body}</a>`
@@ -302,7 +340,7 @@ function renderContent() {
 
   // contact links
   const contactLinks = document.getElementById("contact-links");
-  contactLinks.innerHTML = siteData.social.map((s) => `
+  contactLinks.innerHTML = D.social.map((s) => `
     <a href="${s.url}" target="_blank" rel="noopener">${iconFor(s.icon)} ${escapeHtml(s.label)}</a>
   `).join("");
 }
@@ -330,19 +368,25 @@ function initBootSequence() {
   const log = document.getElementById("boot-log");
   const replayBtn = document.getElementById("replay-boot");
 
-  const lines = [
-    { text: `> booting laila.OS v2.0...`, ok: false },
-    { text: `> loading creativity modules...`, ok: true },
-    { text: `> compiling ideas...`, ok: true },
-    { text: `> calibrating vibe...`, ok: true },
-    { text: `> waking up laila.ai assistant...`, ok: true },
-    { text: `> welcome, ${siteData.name.toLowerCase()}.dev is ready.`, ok: false }
-  ];
+  // read at play() time, not once at init — "replay boot sequence" after a
+  // language switch should replay it in the language now on screen
+  function bootLines() {
+    return [
+      { text: I18N.t("boot.l1"), ok: false },
+      { text: I18N.t("boot.l2"), ok: true },
+      { text: I18N.t("boot.l3"), ok: true },
+      { text: I18N.t("boot.l4"), ok: true },
+      { text: I18N.t("boot.l5"), ok: true },
+      { text: I18N.t("boot.l6", { name: siteData.name.toLowerCase() }), ok: false }
+    ];
+  }
 
+  let lines = bootLines();
   let skipped = false;
   let running = false;
 
   function play() {
+    lines = bootLines();
     running = true;
     skipped = false;
     log.innerHTML = "";
@@ -467,11 +511,18 @@ function initTheme() {
   }
 }
 
-/* ---------------- typing role effect ---------------- */
+/* ---------------- typing role effect ----------------
+   Restartable: a language switch calls this again, so the previous
+   loop has to be cancelled or two timers end up typing different
+   languages into the same element. */
+let typedTimer = null;
 function initTypedRole() {
   const el = document.getElementById("typed-role");
-  const roles = siteData.roles;
+  const roles = I18N.data().roles;
   let roleIndex = 0, charIndex = 0, deleting = false;
+
+  clearTimeout(typedTimer);
+  el.textContent = "";
 
   function tick() {
     const current = roles[roleIndex];
@@ -480,7 +531,8 @@ function initTypedRole() {
       el.textContent = current.slice(0, charIndex);
       if (charIndex === current.length) {
         deleting = true;
-        return setTimeout(tick, 1400);
+        typedTimer = setTimeout(tick, 1400);
+        return;
       }
     } else {
       charIndex--;
@@ -490,7 +542,7 @@ function initTypedRole() {
         roleIndex = (roleIndex + 1) % roles.length;
       }
     }
-    setTimeout(tick, deleting ? 35 : 65);
+    typedTimer = setTimeout(tick, deleting ? 35 : 65);
   }
   tick();
 }
@@ -545,18 +597,17 @@ function initAI() {
   const chipsWrap = document.getElementById("ai-chips");
   const orb = document.getElementById("ai-orb");
 
-  const suggestions = [
-    "Who is Laila?",
-    "How can Laila help us?",
-    "Show me projects",
-    "What's the weather in Bahrain?",
-    "What time is it for you?",
-    "What's 47 * 3?",
-    "How do I contact you?",
-    "Tell me a joke",
-    "Surprise me"
+  const CHIP_KEYS = [
+    "chip.who", "chip.help", "chip.projects", "chip.weather", "chip.time",
+    "chip.math", "chip.contact", "chip.joke", "chip.surprise"
   ];
-  chipsWrap.innerHTML = suggestions.map((s) => `<button type="button">${s}</button>`).join("");
+
+  function renderChips() {
+    chipsWrap.innerHTML = CHIP_KEYS
+      .map((k) => `<button type="button">${escapeHtml(I18N.t(k))}</button>`)
+      .join("");
+  }
+  renderChips();
 
   let voiceOn = false;
   const voiceBtn = document.getElementById("ai-voice-toggle");
@@ -568,6 +619,9 @@ function initAI() {
     window.speechSynthesis.cancel();
     const clean = text.replace(/[🧮🔍🌤️🎉↑↓←→]/gu, "");
     const utter = new SpeechSynthesisUtterance(clean);
+    // without this the browser reads Arabic with an English voice, which is
+    // unintelligible rather than merely accented
+    utter.lang = I18N.lang === "ar" ? "ar-BH" : "en-US";
     window.speechSynthesis.speak(utter);
   }
 
@@ -576,18 +630,32 @@ function initAI() {
       voiceOn = !voiceOn;
       voiceBtn.textContent = voiceOn ? "🔊" : "🔇";
       if (!voiceOn) window.speechSynthesis.cancel();
-      else speak("Voice replies are on.");
+      else speak(I18N.t("ai.voiceOn"));
     });
+  }
+
+  // On a language switch, retranslate the chips and clear the transcript:
+  // a half-English, half-Arabic conversation reads worse than a fresh start,
+  // and the greeting has to come back in the new language anyway.
+  I18N.onChange(() => {
+    renderChips();
+    thread.innerHTML = "";
+    delete thread.dataset.greeted;
+    if (canSpeak) window.speechSynthesis.cancel();
+    if (overlay.classList.contains("open")) greet();
+  });
+
+  function greet() {
+    if (thread.dataset.greeted) return;
+    addMessage("bot", I18N.t("ai.greeting", { name: I18N.data().name }));
+    thread.dataset.greeted = "1";
   }
 
   function open() {
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
     setTimeout(() => input.focus(), 200);
-    if (!thread.dataset.greeted) {
-      addMessage("bot", `Hey, I'm laila.ai. Ask me anything about ${siteData.name}, or tap a suggestion below.`);
-      thread.dataset.greeted = "1";
-    }
+    greet();
   }
   function close() {
     overlay.classList.remove("open");
@@ -655,16 +723,19 @@ function initAI() {
   }
 }
 
-/* ---------------- secret doorway (type "vault" anywhere) ---------------- */
+/* ---------------- secret doorway (type "vault" or "خزنة" anywhere) --------
+   An Arabic keyboard can't produce "vault" without switching layouts, so the
+   door answers to either word. */
 function initSecretDoorway() {
-  const TRIGGER = "vault";
+  const TRIGGERS = ["vault", "خزنة"];
+  const longest = Math.max(...TRIGGERS.map((t) => t.length));
   let buffer = "";
   document.addEventListener("keydown", (e) => {
     const active = document.activeElement;
     if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) return;
     if (e.key.length !== 1) return;
-    buffer = (buffer + e.key.toLowerCase()).slice(-TRIGGER.length);
-    if (buffer === TRIGGER) {
+    buffer = (buffer + e.key.toLowerCase()).slice(-longest);
+    if (TRIGGERS.some((t) => buffer.endsWith(t))) {
       buffer = "";
       openSecretDoorway();
     }
@@ -687,7 +758,7 @@ function initKonami() {
       if (progress === sequence.length) {
         progress = 0;
         launchConfetti();
-        showToast("You found the secret code! 🎉");
+        showToast(I18N.t("toast.konami"));
       }
     } else {
       progress = key === sequence[0] ? 1 : 0;

@@ -25,6 +25,48 @@ in a browser, or serve it with anything static.
   file if you want to wire it up to a real API later.
 - **Konami code** — try `↑ ↑ ↓ ↓ ← → ← → B A` anywhere on the page.
 - **Light/dark toggle** — top-right icon button; preference is remembered.
+- **English / العربية** — the `ع` button in the nav switches the whole page,
+  including full right-to-left layout and the assistant. See below.
+
+## Languages
+
+The site ships in English and Arabic. The toggle sets `lang` and `dir` on
+`<html>` and re-renders in place — no reload, and the scroll position and
+any open case study are kept. The choice is remembered in `localStorage`;
+a first-time visitor whose browser asks for Arabic gets Arabic. A tiny
+inline script in `<head>` applies the saved direction before first paint,
+so there's no left-to-right flash.
+
+Three pieces:
+
+- **`js/i18n.js`** — the engine, plus the `ui` dictionary for the chrome
+  (nav, buttons, headings, labels). Read with `I18N.t("key")`.
+- **`js/data.ar.js`** — the Arabic content, written as a *sparse overlay*
+  merged onto `siteData` key by key and array element by array element.
+  It carries only translatable strings, so URLs, emojis, skill levels,
+  video paths and technology names are never duplicated and can't drift.
+  Leave a field out and the English one shows through.
+- **`css/style.css`** — the `ARABIC / RTL` block at the bottom. Most of
+  the mirroring is free, because the side-specific rules are written as
+  logical properties (`inset-inline-*`, `padding-inline-*`,
+  `border-end-*-radius`). The block holds only what those can't express:
+  the Arabic typeface (IBM Plex Sans Arabic — neither Space Grotesk nor
+  JetBrains Mono has Arabic glyphs), looser line-height, `direction: ltr`
+  islands for version numbers and stat values, and the two keyframes
+  whose `translateX` is physical rather than logical.
+
+**Adding a language:** add a code to `SUPPORTED` (and `RTL` if it needs
+it) in `js/i18n.js`, add a dictionary beside `ui.en`, and add a data
+overlay like `js/data.ar.js`. Nothing else has to change.
+
+The assistant is bilingual too. Each intent in `js/ai-assistant.js` carries
+`keywords`/`keywordsAr` and `reply`/`replyAr`. Matching always scans both
+keyword pools, so an Arabic question is understood while the page is in
+English and vice versa — only the answer follows the current language.
+Arabic input is folded through `I18N.normalize()` first, which collapses
+the hamza / ta-marbuta / alif-maqsura spellings people actually type, so
+`احكِ لي نكتة` and `احكي لي نكته` reach the same intent. The calculator
+accepts Arabic-Indic digits and `×` / `÷`.
 
 ## Make it yours
 
@@ -34,7 +76,13 @@ social links, skills, projects, and jokes. Edit that one file first.
 Then:
 - `siteData.resumeUrl` → point it at a real PDF.
 - `siteData.social` → replace the placeholder URLs.
+- `js/data.ar.js` → the Arabic of whatever you changed. Only the fields
+  you want translated; the rest falls through to `js/data.js`.
 - `css/style.css` → the palette lives in the `:root` block at the top.
+
+Both `index.html` and the `?v=` query strings on its `<script>`/`<link>`
+tags are cache-busters — bump the number after editing a JS or CSS file
+so browsers fetch the new copy.
 
 ## Palette
 
@@ -71,12 +119,17 @@ and the Konami confetti, which read the same tokens from JS.
 ## Structure
 
 ```
-index.html          markup
-css/style.css        all styling (light theme default, dark via [data-theme])
+index.html            markup
+css/style.css         all styling (light default, dark via [data-theme], RTL via [dir])
 js/data.js            your content — edit this
+js/data.ar.js         the Arabic overlay on top of it
+js/i18n.js            language engine + the UI string dictionary
 js/particles.js       background canvas animation
-js/ai-assistant.js    the assistant's "brain" (keyword intents)
-js/app.js              rendering + all interactions
+js/ai-assistant.js    the assistant's "brain" (bilingual keyword intents)
+js/app.js             rendering + all interactions
 ```
+
+Load order matters: `data.js` → `data.ar.js` → `i18n.js` → the rest, and
+`I18N.init()` runs before any rendering.
 
 No dependencies, no npm install, no build step — just open the file.

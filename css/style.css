@@ -213,6 +213,22 @@ kbd { font-family: var(--font-mono); background: var(--surface); border: 1px sol
 }
 .icon-btn:hover { transform: rotate(15deg); border-color: var(--accent-1); }
 
+/* language toggle — sibling of .icon-btn, but it holds a word rather than a
+   glyph, so it sizes to its label and doesn't tilt on hover */
+.lang-btn {
+  height: 38px; min-width: 42px; padding: 0 13px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--surface-glass); border: 1px solid var(--border); color: var(--ink);
+  /* the ع has to render even while the page is in English, so the Arabic
+     face leads here regardless of theme or direction */
+  font-family: 'IBM Plex Sans Arabic', var(--font-mono);
+  font-weight: 600; font-size: .88rem; line-height: 1;
+  cursor: pointer; backdrop-filter: blur(10px);
+  transition: transform .25s ease, border-color .25s, color .25s;
+}
+.lang-btn:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateY(-2px); }
+.lang-btn:active { transform: scale(.94); }
+
 .dot-pulse {
   width: 7px; height: 7px; border-radius: 50%; background: var(--accent-3);
   box-shadow: 0 0 0 0 rgba(var(--brass-rgb),.6);
@@ -230,14 +246,15 @@ kbd { font-family: var(--font-mono); background: var(--surface); border: 1px sol
 /* warm, low-contrast washes — gold rather than wood, so on cream they read
    as light on parchment instead of a stain */
 /* kept deliberately faint — a formal page shouldn't look lit from behind */
-.bg-glow-1 { width: 480px; height: 480px; background: var(--accent-4); top: -120px; left: -120px; opacity: .14; }
-.bg-glow-2 { width: 420px; height: 420px; background: var(--accent-3); bottom: -100px; right: -100px; opacity: .08; }
+.bg-glow-1 { width: 480px; height: 480px; background: var(--accent-4); top: -120px; inset-inline-start: -120px; opacity: .14; }
+.bg-glow-2 { width: 420px; height: 420px; background: var(--accent-3); bottom: -100px; inset-inline-end: -100px; opacity: .08; }
 /* the dark ground can carry a little more before it reads as a stain */
 :root[data-theme="dark"] .bg-glow-1 { opacity: .22; }
 :root[data-theme="dark"] .bg-glow-2 { opacity: .13; }
 
+/* grows from the reading-start edge: left in English, right in Arabic */
 #scroll-progress {
-  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  position: fixed; top: 0; inset-inline-start: 0; height: 3px; width: 0%;
   background: var(--grad-vivid); z-index: 500; transition: width .1s linear;
 }
 
@@ -264,7 +281,7 @@ body.no-custom-cursor .cursor-dot, body.no-custom-cursor .cursor-ring { display:
 .nav-links a { color: var(--ink-soft); position: relative; }
 .nav-links a:hover { color: var(--ink); }
 .nav-links a::after {
-  content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0%;
+  content: ""; position: absolute; inset-inline-start: 0; bottom: -4px; height: 2px; width: 0%;
   background: var(--grad-vivid); transition: width .25s ease;
 }
 .nav-links a:hover::after { width: 100%; }
@@ -516,14 +533,14 @@ body.pm-open #scroll-progress { display: none !important; }
 @media (max-width: 640px) { .pm-body { padding: 26px 20px; } .pm-overlay { padding: 72px 10px 28px; } }
 
 .pm-close {
-  position: absolute; top: 14px; right: 14px; z-index: 3;
+  position: absolute; top: 14px; inset-inline-end: 14px; z-index: 3;
   width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
   background: var(--surface); border: 1px solid var(--border); color: var(--ink);
   font-size: .95rem; transition: transform .2s ease, border-color .2s ease;
 }
 .pm-close:hover { transform: rotate(90deg); border-color: var(--accent-1); }
 
-.pm-head { display: flex; gap: 16px; align-items: flex-start; padding-right: 44px; }
+.pm-head { display: flex; gap: 16px; align-items: flex-start; padding-inline-end: 44px; }
 .pm-emoji { font-size: 2.4rem; line-height: 1; }
 .pm-title { font-size: clamp(1.3rem, 3vw, 1.8rem); margin: 0; font-weight: 600; }
 .pm-tagline { margin: 8px 0 0; color: var(--ink-faint); font-size: 1rem; }
@@ -576,7 +593,7 @@ body.pm-open #scroll-progress { display: none !important; }
   display: block; margin: 1px 0 3px; font-size: .82rem; color: var(--accent-2);
 }
 
-.pm-steps { margin: 0; padding-left: 20px; display: grid; gap: 9px; }
+.pm-steps { margin: 0; padding-inline-start: 20px; display: grid; gap: 9px; }
 .pm-steps li { color: var(--ink-faint); line-height: 1.6; }
 .pm-steps li::marker { color: var(--accent-1); font-family: var(--font-mono); font-weight: 600; }
 
@@ -627,7 +644,7 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
 .project-card.is-static:hover::before { opacity: 0; }
 
 .project-sticker {
-  position: absolute; top: 16px; right: 16px; z-index: 3;
+  position: absolute; top: 16px; inset-inline-end: 16px; z-index: 3;
   display: inline-flex; align-items: center; gap: 6px;
   background: var(--surface); border: 1.5px solid var(--signal); color: var(--signal-ink);
   font-family: var(--font-mono); font-weight: 700; font-size: .68rem; letter-spacing: .02em;
@@ -683,7 +700,7 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
 .boot-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--navy-800); }
 .boot-dot { width: 10px; height: 10px; border-radius: 50%; }
 .boot-dot.r { background: var(--brass-600); } .boot-dot.y { background: var(--brass-400); } .boot-dot.g { background: var(--sage-300); }
-.boot-title { margin-left: 10px; font-family: var(--font-mono); font-size: .78rem; color: var(--navy-400); }
+.boot-title { margin-inline-start: 10px; font-family: var(--font-mono); font-size: .78rem; color: var(--navy-400); }
 .boot-log {
   margin: 0; padding: 22px 20px 26px; min-height: 220px; font-family: var(--font-mono); font-size: .88rem;
   color: var(--bone-300); white-space: pre-wrap; line-height: 1.7;
@@ -693,7 +710,7 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
 
 /* ---------- AI orb + palette ---------- */
 .ai-orb {
-  position: fixed; bottom: 28px; right: 28px; width: 60px; height: 60px; border-radius: 50%;
+  position: fixed; bottom: 28px; inset-inline-end: 28px; width: 60px; height: 60px; border-radius: 50%;
   background: var(--grad-vivid); border: none; cursor: pointer; z-index: 400;
   display: grid; place-items: center; box-shadow: var(--shadow-glow);
   animation: float 4s ease-in-out infinite;
@@ -717,14 +734,16 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
 .ai-panel-header { display: flex; align-items: center; gap: 12px; padding: 18px 18px 14px; border-bottom: 1px solid var(--border); }
 .ai-avatar { font-size: 1.6rem; }
 .ai-panel-title { font-weight: 700; font-size: .98rem; }
-.ai-live { font-size: .68rem; color: var(--signal); font-family: var(--font-mono); margin-left: 6px; }
+.ai-live { font-size: .68rem; color: var(--signal); font-family: var(--font-mono); margin-inline-start: 6px; }
 .ai-panel-sub { font-size: .78rem; color: var(--ink-faint); margin-top: 2px; }
-.ai-panel-header .icon-btn { margin-left: auto; }
+.ai-panel-header .icon-btn { margin-inline-start: auto; }
 
 .ai-thread { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-height: 160px; }
 .ai-msg { max-width: 85%; padding: 11px 15px; border-radius: 14px; font-size: .92rem; line-height: 1.5; }
-.ai-msg.user { align-self: flex-end; background: var(--grad-cta); color: var(--on-grad); border-bottom-right-radius: 4px; }
-.ai-msg.bot { align-self: flex-start; background: var(--bg-soft); color: var(--ink); border-bottom-left-radius: 4px; white-space: pre-wrap; }
+/* the flattened corner is the one nearest the speaker, so it follows the
+   bubble's own alignment rather than a fixed side */
+.ai-msg.user { align-self: flex-end; background: var(--grad-cta); color: var(--on-grad); border-end-end-radius: 4px; }
+.ai-msg.bot { align-self: flex-start; background: var(--bg-soft); color: var(--ink); border-end-start-radius: 4px; white-space: pre-wrap; }
 .ai-msg.typing { display: flex; gap: 4px; align-items: center; padding: 14px 16px; }
 .ai-msg.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); animation: typingDot 1s infinite; }
 .ai-msg.typing span:nth-child(2) { animation-delay: .15s; } .ai-msg.typing span:nth-child(3) { animation-delay: .3s; }
@@ -785,6 +804,68 @@ body.portal-open #portal-overlay { clip-path: circle(150% at 50% 50%); }
   60%  { transform: translate(70vw, -5vh) rotate(8deg); }
   80%  { transform: translate(92vw, 6vh) rotate(-6deg); }
   100% { transform: translate(118vw, -2vh) rotate(4deg); }
+}
+
+/* =========================================================
+   ARABIC / RTL
+   Almost everything mirrors for free: the layout is flex and
+   grid throughout, and the handful of side-specific rules above
+   were written as logical properties (inset-inline-*,
+   padding-inline-*, border-end-*-radius) so they flip with
+   `dir` on their own.
+
+   What's left is the four things logical properties can't
+   express: the typeface, a keyframe whose translate is
+   physical, and two decorative rotations.
+   ========================================================= */
+
+/* Neither Space Grotesk nor JetBrains Mono has Arabic glyphs — without
+   this the whole page falls back to whatever the OS picks, which is
+   rarely the same font twice. IBM Plex Sans Arabic carries both scripts,
+   so Latin tech names inside Arabic sentences stay in family. */
+:root[dir="rtl"] {
+  --font-display: 'IBM Plex Sans Arabic', 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Sans Arabic', 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Arabic letterforms sit on a smaller x-height relative to their ascenders,
+   so the same line-height reads cramped — give the running text more room. */
+:root[dir="rtl"] body { line-height: 1.65; }
+:root[dir="rtl"] .hero h1 { line-height: 1.35; }
+:root[dir="rtl"] .pm-block p,
+:root[dir="rtl"] .pm-highlights span { line-height: 1.85; }
+
+/* Latin runs that must not be re-ordered by the bidi algorithm. Version
+   numbers, stat values and stack chips are read left-to-right even inside
+   an Arabic sentence, and "better-sqlite3 13" flipping to "13 better-sqlite3"
+   is exactly the kind of thing that makes a translated page look machine-made. */
+:root[dir="rtl"] .pm-chips span,
+:root[dir="rtl"] .pm-stat b,
+:root[dir="rtl"] .marquee-track span,
+:root[dir="rtl"] .skill-pct,
+:root[dir="rtl"] .cert-date { direction: ltr; }
+/* …but these are centred or right-aligned boxes, so re-anchor the text
+   after forcing its direction */
+:root[dir="rtl"] .pm-stat b { text-align: center; }
+:root[dir="rtl"] .pm-chips span { text-align: start; }
+
+/* translateX is physical, so the marquee would scroll against the reading
+   direction. In Arabic items leave to the right and arrive from the left. */
+:root[dir="rtl"] .marquee-track { animation-name: marqueeRtl; }
+@keyframes marqueeRtl { from { transform: translateX(0); } to { transform: translateX(50%); } }
+
+/* the "live · in use" sticker leans away from the corner it sits in */
+:root[dir="rtl"] .project-sticker { transform: rotate(4deg); }
+
+/* the butterflies drift with the reading direction: right-to-left in Arabic */
+:root[dir="rtl"] .butterfly { left: auto; right: -8%; animation-name: butterflyDriftRtl; }
+@keyframes butterflyDriftRtl {
+  0%   { transform: translate(0, 0) rotate(8deg); }
+  20%  { transform: translate(-24vw, -7vh) rotate(-10deg); }
+  40%  { transform: translate(-48vw, 5vh) rotate(10deg); }
+  60%  { transform: translate(-70vw, -5vh) rotate(-8deg); }
+  80%  { transform: translate(-92vw, 6vh) rotate(6deg); }
+  100% { transform: translate(-118vw, -2vh) rotate(-4deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

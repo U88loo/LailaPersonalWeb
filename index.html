@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" dir="ltr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +14,27 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%8B%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=13">
+<!-- Space Grotesk / JetBrains Mono carry no Arabic glyphs, so IBM Plex Sans
+     Arabic is loaded alongside them and takes over under [dir="rtl"]. It's
+     loaded in both languages because the ع on the language toggle needs it. -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=14">
+<!-- Set lang/dir before first paint — otherwise an Arabic visitor gets a
+     visible LTR→RTL flip once i18n.js runs. Mirrors the pattern the theme
+     toggle uses via localStorage. -->
+<script>
+(function () {
+  try {
+    var saved = localStorage.getItem("laila-lang");
+    var lang = (saved === "ar" || saved === "en")
+      ? saved
+      : ((navigator.language || "en").toLowerCase().indexOf("ar") === 0 ? "ar" : "en");
+    var root = document.documentElement;
+    root.setAttribute("lang", lang);
+    root.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+  } catch (e) { /* storage blocked — i18n.js still sorts it out on load */ }
+})();
+</script>
 </head>
 <body>
 
@@ -24,10 +43,10 @@
   <div class="boot-window">
     <div class="boot-bar">
       <span class="boot-dot r"></span><span class="boot-dot y"></span><span class="boot-dot g"></span>
-      <span class="boot-title">laila.OS · boot log</span>
+      <span class="boot-title" data-i18n="boot.title">laila.OS · boot log</span>
     </div>
     <pre id="boot-log" class="boot-log"></pre>
-    <div class="boot-hint">press any key to skip</div>
+    <div class="boot-hint" data-i18n="boot.hint">press any key to skip</div>
   </div>
 </div>
 
@@ -50,17 +69,21 @@
 <header class="nav">
   <a href="#home" class="nav-logo">L<span>.</span></a>
   <nav class="nav-links">
-    <a href="#about">about</a>
-    <a href="#work">work</a>
-    <a href="#skills">skills</a>
-    <a href="#certs">certs</a>
-    <a href="#contact">contact</a>
+    <a href="#about" data-i18n="nav.about">about</a>
+    <a href="#work" data-i18n="nav.work">work</a>
+    <a href="#skills" data-i18n="nav.skills">skills</a>
+    <a href="#certs" data-i18n="nav.certs">certs</a>
+    <a href="#contact" data-i18n="nav.contact">contact</a>
   </nav>
   <div class="nav-actions">
-    <button id="ask-ai-btn" class="btn btn-ghost" title="Ask the assistant (Ctrl/Cmd + K)">
-      <span class="dot-pulse"></span> ask laila.ai
+    <button id="ask-ai-btn" class="btn btn-ghost" data-i18n-title="nav.askTitle" title="Ask the assistant (Ctrl/Cmd + K)">
+      <span class="dot-pulse"></span> <span data-i18n="nav.ask">ask laila.ai</span>
     </button>
-    <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+    <!-- language toggle: always labelled with the language you'd switch TO -->
+    <button id="lang-toggle" class="lang-btn" data-i18n-title="lang.title" data-i18n-aria-label="lang.title">
+      <span id="lang-label" data-i18n="lang.label">ع</span>
+    </button>
+    <button id="theme-toggle" class="icon-btn" data-i18n-title="nav.theme" data-i18n-aria-label="nav.theme" title="Toggle theme" aria-label="Toggle theme">
       <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
@@ -71,15 +94,15 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-text" data-reveal>
-      <p class="eyebrow">&lt;hello world/&gt;</p>
-      <h1>Hi, I'm <span class="grad-text">Laila</span>.<br>I'm a <span id="typed-role" class="typed-role"></span><span class="caret">|</span></h1>
-      <p class="hero-sub">Software engineering graduate, fresh out of the University of Bahrain as of September 2026. I care about design, testing, and AI, and about building things that actually solve problems. This site is one of them; the assistant in the corner actually answers questions about me.</p>
+      <p class="eyebrow" data-i18n="hero.eyebrow">&lt;hello world/&gt;</p>
+      <h1><span data-i18n="hero.greet">Hi, I'm</span> <span class="grad-text" id="hero-name">Laila</span>.<br><span data-i18n="hero.iam">I'm a</span> <span id="typed-role" class="typed-role"></span><span class="caret">|</span></h1>
+      <p class="hero-sub" data-i18n="hero.sub">Software engineering graduate, fresh out of the University of Bahrain as of September 2026. I care about design, testing, and AI, and about building things that actually solve problems. This site is one of them; the assistant in the corner actually answers questions about me.</p>
       <div class="hero-cta">
-        <a href="#work" class="btn btn-primary">see the work</a>
-        <button class="btn btn-outline" data-open-ai>ask the AI about me →</button>
+        <a href="#work" class="btn btn-primary" data-i18n="hero.cta1">see the work</a>
+        <button class="btn btn-outline" data-open-ai data-i18n="hero.cta2">ask the AI about me →</button>
       </div>
       <div class="hero-tags">
-        <span>#solvesRealProblems</span><span>#testEverything</span><span>#AIcurious</span>
+        <span data-i18n="hero.tag1">#solvesRealProblems</span><span data-i18n="hero.tag2">#testEverything</span><span data-i18n="hero.tag3">#AIcurious</span>
       </div>
     </div>
 
@@ -142,15 +165,15 @@
     </div>
 
     <button class="scroll-cue" id="scroll-cue" aria-label="Scroll down">
-      <span></span> scroll
+      <span></span> <span data-i18n="hero.scroll">scroll</span>
     </button>
   </section>
 
   <!-- ABOUT -->
   <section id="about" class="section">
-    <p class="section-kicker" data-reveal>01 · about</p>
+    <p class="section-kicker" data-reveal data-i18n="kicker.about">01 · about</p>
     <div class="about-grid">
-      <h2 class="about-lead" data-reveal>
+      <h2 class="about-lead" data-reveal data-i18n-html="about.lead">
         I like software that feels a little <em>alive</em>: interfaces with
         personality, details you notice on the second visit, and code that's
         honest about what it's doing.
@@ -167,15 +190,15 @@
           <li><span>🛠️</span> <span id="about-focus">Building things that think a little</span></li>
           <li><span>🎧</span> <span id="about-status">Currently vibing to: lo-fi + old error messages</span></li>
         </ul>
-        <a id="resume-link" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm">download résumé ↓</a>
+        <a id="resume-link" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm" data-i18n="about.resume">download résumé ↓</a>
       </div>
     </div>
   </section>
 
   <!-- SKILLS -->
   <section id="skills" class="section">
-    <p class="section-kicker" data-reveal>02 · skills</p>
-    <h2 class="section-title" data-reveal>Tools I reach for</h2>
+    <p class="section-kicker" data-reveal data-i18n="kicker.skills">02 · skills</p>
+    <h2 class="section-title" data-reveal data-i18n="title.skills">Tools I reach for</h2>
     <div id="skills-grid" class="skills-grid" data-reveal></div>
     <div class="marquee" data-reveal>
       <div class="marquee-track" id="marquee-track"></div>
@@ -184,23 +207,23 @@
 
   <!-- PROJECTS -->
   <section id="work" class="section">
-    <p class="section-kicker" data-reveal>03 · selected work</p>
-    <h2 class="section-title" data-reveal>Things I've shipped</h2>
+    <p class="section-kicker" data-reveal data-i18n="kicker.work">03 · selected work</p>
+    <h2 class="section-title" data-reveal data-i18n="title.work">Things I've shipped</h2>
     <div id="projects-grid" class="projects-grid" data-reveal></div>
   </section>
 
   <!-- CERTIFICATIONS -->
   <section id="certs" class="section">
-    <p class="section-kicker" data-reveal>04 · certifications</p>
-    <h2 class="section-title" data-reveal>Proof I did the reading</h2>
+    <p class="section-kicker" data-reveal data-i18n="kicker.certs">04 · certifications</p>
+    <h2 class="section-title" data-reveal data-i18n="title.certs">Proof I did the reading</h2>
     <div id="certs-grid" class="certs-grid" data-reveal></div>
   </section>
 
   <!-- CONTACT -->
   <section id="contact" class="section contact-section">
-    <p class="section-kicker" data-reveal>05 · contact</p>
-    <h2 class="section-title" data-reveal>Let's build something.</h2>
-    <p class="contact-sub" data-reveal>
+    <p class="section-kicker" data-reveal data-i18n="kicker.contact">05 · contact</p>
+    <h2 class="section-title" data-reveal data-i18n="title.contact">Let's build something.</h2>
+    <p class="contact-sub" data-reveal data-i18n-html="contact.sub">
       Fastest way in is the assistant: press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd>
       and ask it for my email. Or just use the old-fashioned links below.
     </p>
@@ -210,32 +233,32 @@
 </main>
 
 <footer class="footer">
-  <p>Built with vibecoding energy in <span id="footer-year"></span>. No frameworks were harmed.</p>
-  <button id="replay-boot" class="link-btn">replay boot sequence ↻</button>
+  <p id="footer-text"></p>
+  <button id="replay-boot" class="link-btn" data-i18n="footer.replay">replay boot sequence ↻</button>
 </footer>
 
 <!-- Floating AI orb -->
-<button id="ai-orb" class="ai-orb" aria-label="Open AI assistant">
+<button id="ai-orb" class="ai-orb" data-i18n-aria-label="ai.orb" aria-label="Open AI assistant">
   <span class="ai-orb-core"></span>
 </button>
 
 <!-- AI command palette -->
 <div id="ai-overlay" class="ai-overlay" aria-hidden="true">
-  <div class="ai-panel" role="dialog" aria-modal="true" aria-label="Laila AI assistant">
+  <div class="ai-panel" role="dialog" aria-modal="true" data-i18n-aria-label="ai.dialog" aria-label="Laila AI assistant">
     <div class="ai-panel-header">
       <span class="ai-avatar">🧠</span>
       <div>
-        <div class="ai-panel-title">laila.ai <span class="ai-live">● online</span></div>
-        <div class="ai-panel-sub">ask me anything about Laila. Try "who is laila" or "surprise me"</div>
+        <div class="ai-panel-title"><span data-i18n="ai.title">laila.ai</span> <span class="ai-live" data-i18n="ai.online">● online</span></div>
+        <div class="ai-panel-sub" data-i18n="ai.sub">ask me anything about Laila. Try "who is laila" or "surprise me"</div>
       </div>
-      <button id="ai-voice-toggle" class="icon-btn" title="Toggle spoken replies" aria-label="Toggle voice replies">🔇</button>
-      <button id="ai-close" class="icon-btn" aria-label="Close">✕</button>
+      <button id="ai-voice-toggle" class="icon-btn" data-i18n-title="ai.voice" data-i18n-aria-label="ai.voice" title="Toggle spoken replies" aria-label="Toggle voice replies">🔇</button>
+      <button id="ai-close" class="icon-btn" data-i18n-aria-label="ai.close" aria-label="Close">✕</button>
     </div>
     <div id="ai-thread" class="ai-thread"></div>
     <div class="ai-chips" id="ai-chips"></div>
     <form id="ai-form" class="ai-form">
-      <input id="ai-input" type="text" autocomplete="off" placeholder="Type a question and hit enter…" />
-      <button type="submit" class="btn btn-primary btn-sm">send</button>
+      <input id="ai-input" type="text" autocomplete="off" data-i18n-placeholder="ai.placeholder" placeholder="Type a question and hit enter…" />
+      <button type="submit" class="btn btn-primary btn-sm" data-i18n="ai.send">send</button>
     </form>
   </div>
 </div>
@@ -243,7 +266,7 @@
 <!-- Project case-study popup -->
 <div id="project-modal" class="pm-overlay" aria-hidden="true">
   <div class="pm-panel" role="dialog" aria-modal="true" aria-labelledby="pm-title">
-    <button id="pm-close" class="pm-close" aria-label="Close project details">✕</button>
+    <button id="pm-close" class="pm-close" data-i18n-aria-label="pm.close" aria-label="Close project details">✕</button>
     <div id="pm-body" class="pm-body"></div>
   </div>
 </div>
@@ -252,9 +275,11 @@
 
 <!-- ?v= is a cache-buster: bump it after editing any of these so browsers
      fetch the new file instead of serving a stale copy. -->
-<script src="js/data.js?v=13"></script>
-<script src="js/particles.js?v=13"></script>
-<script src="js/ai-assistant.js?v=13"></script>
-<script src="js/app.js?v=13"></script>
+<script src="js/data.js?v=14"></script>
+<script src="js/data.ar.js?v=14"></script>
+<script src="js/i18n.js?v=14"></script>
+<script src="js/particles.js?v=14"></script>
+<script src="js/ai-assistant.js?v=14"></script>
+<script src="js/app.js?v=14"></script>
 </body>
 </html>
