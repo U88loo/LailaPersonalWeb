@@ -71,7 +71,7 @@ const I18N = (function () {
 
       "title.skills": "Tools I reach for",
       "title.work": "Things I've shipped",
-      "title.certs": "Proof I did the reading",
+      "title.certs": "Training and credentials",
       "title.contact": "Let's build something.",
 
       "contact.sub":
@@ -169,7 +169,7 @@ const I18N = (function () {
 
       "title.skills": "الأدوات التي أعمل بها",
       "title.work": "أشياء أطلقتها",
-      "title.certs": "إثبات أنني قرأت الدرس",
+      "title.certs": "التدريب والشهادات",
       "title.contact": "لنبنِ شيئاً معاً.",
 
       "contact.sub":
