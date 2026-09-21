@@ -73,8 +73,8 @@ const LailaAI = (function () {
         name: "pitch",
         keywords: ["how can laila help", "help us", "why hire", "why should we hire", "what can you do for us", "hire laila", "pitch me"],
         keywordsAr: ["أن تساعدنا", "تساعدنا", "لماذا نوظف", "ماذا تقدم لنا", "لماذا نختارها", "لماذا نعينها"],
-        reply: () => `Laila brings solid engineering fundamentals (Java, JavaScript, Python, SQL), strong software design and testing habits, and genuine curiosity about AI, plus she's led a project team before and picks up new tools fast. If you need someone who cares about getting the details right, that's her pitch. Ask about her skills or projects for specifics.`,
-        replyAr: () => `تجمع ليلى أساسيات هندسية متينة (Java وJavaScript وPython وSQL)، وعادات قوية في تصميم البرمجيات واختبارها، وفضولاً حقيقياً تجاه الذكاء الاصطناعي، إضافة إلى أنها قادت فريق مشروع من قبل وتلتقط الأدوات الجديدة بسرعة. إن كنت تبحث عمّن يهتم بضبط التفاصيل، فهذه هي. اسأل عن مهاراتها أو مشاريعها للتفاصيل.`
+        reply: () => `Laila brings solid engineering fundamentals (Java, JavaScript, Python, SQL), strong software design and testing habits, and genuine curiosity about AI, plus she's shipped production systems end to end on her own and picks up new tools fast. If you need someone who cares about getting the details right, that's her pitch. Ask about her skills or projects for specifics.`,
+        replyAr: () => `تجمع ليلى أساسيات هندسية متينة (Java وJavaScript وPython وSQL)، وعادات قوية في تصميم البرمجيات واختبارها، وفضولاً حقيقياً تجاه الذكاء الاصطناعي، إضافة إلى أنها أطلقت أنظمة إنتاجية كاملة بمفردها وتلتقط الأدوات الجديدة بسرعة. إن كنت تبحث عمّن يهتم بضبط التفاصيل، فهذه هي. اسأل عن مهاراتها أو مشاريعها للتفاصيل.`
       },
       {
         name: "strengths",
@@ -118,8 +118,8 @@ const LailaAI = (function () {
         name: "leadership",
         keywords: ["leadership", "team player", "lead a team", "teamwork example", "led a project"],
         keywordsAr: ["قيادة", "قيادة فريق", "عمل جماعي", "قادت فريقاً", "روح الفريق"],
-        reply: () => `Yes. Laila led the team on the Library Management System project, and collaborated closely across every project listed, including a 3-person AI team for Dosely.`,
-        replyAr: () => `نعم. قادت ليلى الفريق في مشروع نظام إدارة المكتبة، وتعاونت عن قرب في كل مشروع مذكور هنا، بما في ذلك فريق من ثلاثة أشخاص لمشروع Dosely.`
+        reply: () => `Both ways. Dosely was a three-person team at the University of Bahrain, built closely together end to end. The Aisha Yateem clinic system, YaldaAuto and the Library Management System she designed, built and shipped on her own — two of them are in daily production use.`,
+        replyAr: () => `بالطريقتين. كان Dosely مشروعاً لفريق من ثلاثة أشخاص في جامعة البحرين، بُني بتعاون وثيق من البداية إلى النهاية. أما نظام مركز عائشة يتيم وYaldaAuto ونظام إدارة المكتبة فقد صمّمتها وبنتها وأطلقتها بمفردها، واثنان منها قيد الاستخدام اليومي الفعلي.`
       },
       {
         name: "testingDetail",

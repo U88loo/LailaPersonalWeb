@@ -357,8 +357,8 @@ const siteData = {
     {
       emoji: "📚",
       title: "Library Management System",
-      description: "Java-based system to manage books, users, and borrowing records. Led the team and tested core features.",
-      tags: ["Java", "Team Lead", "Testing"],
+      description: "Java-based system to manage books, users, and borrowing records. Designed, built, and tested it end to end on my own.",
+      tags: ["Java", "Solo Project", "Testing"],
       link: "#"
     },
     {
