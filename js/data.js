@@ -355,6 +355,79 @@ const siteData = {
       }
     },
     {
+      emoji: "🌿",
+      title: "Juzoor: Business Studio for a Herbs Brand",
+      description: "A private, bilingual business app for a natural herbs brand in Bahrain: products with photos, customers, invoices in English and Arabic, payments, automatic stock, a calendar, and real profit reports.",
+      tags: ["Node.js", "SQLite", "JavaScript", "Bilingual / RTL"],
+      badge: "Client project",
+      link: "#",
+
+      details: {
+        tagline: "One calm place to run a small business, and to see what it actually earns.",
+        role: "Sole developer · Design, build and testing · Built for a herbs brand in Bahrain",
+        overview: [
+          "Juzoor (جذور, \"roots\") is a private web app I designed and built for a natural herbs brand in Bahrain. The owner sells herbal oils, teas and blends, and wanted one calm, easy place to manage her products, customers and invoices, and to see what she really earns.",
+          "She can add products with photos, save customers, and create invoices in English, Arabic or both. She records cash and BenefitPay payments and can see who still owes money. Stock updates automatically with every sale, a calendar holds orders, deliveries and bazaars, and the reports show real profit after product costs and expenses.",
+          "The whole interface works in both languages, including a full right-to-left Arabic layout, on desktop and phone, with light and dark themes and gentle motion."
+        ],
+        stats: [
+          { value: "0", label: "third-party dependencies" },
+          { value: "11.5k", label: "lines of code" },
+          { value: "42", label: "API routes" },
+          { value: "11", label: "database tables" },
+          { value: "~600", label: "translated strings per language" },
+          { value: "12", label: "app screens" },
+          { value: "37", label: "API checks" },
+          { value: "29", label: "end-to-end user flows" }
+        ],
+        highlights: [
+          { emoji: "🧾", title: "Invoices", text: "Customer search, a product picker with photos, discount, VAT and delivery. Invoices print on A4 in English, Arabic or both, and can be sent as a WhatsApp message. A private panel shows the profit on every sale." },
+          { emoji: "💳", title: "Payments", text: "Paid, partly paid and overdue statuses, with each payment recorded by method: cash, BenefitPay, bank transfer or card." },
+          { emoji: "🫙", title: "Products", text: "Photos, Arabic and English names, live margin, automatic stock tracking and low-stock alerts." },
+          { emoji: "👤", title: "Customers", text: "Purchase history, favourite products and balances owed." },
+          { emoji: "📅", title: "Calendar", text: "Orders, deliveries, bazaars and reminders, alongside payment due dates." },
+          { emoji: "📊", title: "Expenses & reports", text: "A step-by-step profit statement, charts, and breakdowns by product, customer and payment method." },
+          { emoji: "⚙️", title: "Settings", text: "Logo upload, invoice numbering, light and dark themes, one-file backups and Excel exports." }
+        ],
+        sections: [
+          {
+            title: "Engineering highlights",
+            items: [
+              { emoji: "📦", title: "No third-party dependencies", text: "The server is plain Node.js using its built-in SQLite and crypto modules, and the front end is plain JavaScript with ES modules. There is nothing to install beyond Node itself." },
+              { emoji: "🧮", title: "One calculation module, shared", text: "The browser and the server run the same calculation module, so the total on screen and the total that gets saved always match. Amounts round to the currency's own decimals: three for Bahraini dinars." },
+              { emoji: "🔁", title: "Stock that stays honest", text: "Stock changes happen inside database transactions, and they reverse when an invoice is edited, cancelled or deleted." },
+              { emoji: "🗣️", title: "Two languages throughout", text: "About 600 translated strings in each language, a full right-to-left layout, and correct Arabic plural forms through Intl.PluralRules." }
+            ]
+          },
+          {
+            title: "Security",
+            items: [
+              { emoji: "🔑", title: "Passwords and sessions", text: "Passwords are hashed with scrypt, and sessions use HttpOnly session cookies." },
+              { emoji: "⏱️", title: "Rate-limited sign-in", text: "Repeated failed sign-ins are blocked for a while, so a password can't be guessed by brute force." },
+              { emoji: "🛡️", title: "Request hardening", text: "CSRF protection on every request that changes data, a strict Content Security Policy, and checked image uploads." }
+            ]
+          },
+          {
+            title: "Testing",
+            items: [
+              { emoji: "🔌", title: "37 API checks", text: "Covering the server's routes and the rules behind them." },
+              { emoji: "🖱️", title: "29 end-to-end user flows", text: "Run in a real browser, the way the owner actually uses the app." },
+              { emoji: "📱", title: "Layout checks", text: "Across 4 screen widths, in both English and Arabic." },
+              { emoji: "🖨️", title: "Print-to-PDF checks", text: "The printed A4 invoice is checked as a PDF." }
+            ]
+          }
+        ],
+        stack: [
+          { group: "Backend", items: ["Node.js", "node:sqlite", "node:crypto", "ES modules"] },
+          { group: "Frontend", items: ["JavaScript", "HTML / CSS", "SVG charts", "No build step"] },
+          { group: "Localisation", items: ["English", "Arabic", "Intl API", "Full RTL"] }
+        ],
+        videos: [
+          { src: "assets/juzoor.mp4", label: "System walkthrough" }
+        ]
+      }
+    },
+    {
       emoji: "📚",
       title: "Library Management System",
       description: "Java-based system to manage books, users, and borrowing records. Designed, built, and tested it end to end on my own.",
