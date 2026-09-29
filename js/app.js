@@ -1,19 +1,22 @@
 /* =========================================================
-   app.js — boot sequence, rendering, interactions.
+   app.js — rendering and interactions.
+
+   The page is a film in scenes: the opening poster
+   (js/poster.js), then the scroll-driven scenes
+   (js/cinema.js). This file renders the content they animate
+   and wires everything else — assistant, case studies, theme,
+   language, cursor, easter eggs.
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   I18N.init();          // must run first: everything below reads through it
   renderContent();
-  initBootSequence();
   initCursor();
   initNav();
   initTheme();
   initLanguage();
-  initTypedRole();
   initScrollReveal();
   initScrollProgress();
-  initMarquee();
   initSkillBars();
   initAI();
   initKonami();
@@ -21,23 +24,25 @@ document.addEventListener("DOMContentLoaded", () => {
   initVisitTracking();
   initSecretDoorway();
   initButterflies();
-  initOrrery();
   initProjectModal();
+  Poster.mount(document.getElementById("poster"));
+  Cinema.init();        // last: it measures the content rendered above
 });
 
 /* ---------------- language toggle ----------------
    I18N.applyDom() has already handled every [data-i18n] string in
    index.html by the time listeners fire; what's left is the markup
-   app.js generated itself, plus the two loops that captured their
-   text when they started. */
+   app.js generated itself, the poster's labels, and the scroll scenes,
+   which have to re-measure text that just changed length. */
 function initLanguage() {
   const btn = document.getElementById("lang-toggle");
   if (btn) btn.addEventListener("click", () => I18N.toggle());
 
   I18N.onChange(() => {
     renderContent();
-    initTypedRole();   // restartable — cancels the running loop first
     initSkillBars();   // the bars were just replaced, so re-observe them
+    Poster.refresh();
+    Cinema.refresh();
   });
 }
 
@@ -67,6 +72,14 @@ function initProjectModal() {
     if (!project.details) return; // real link — let it do its thing
     e.preventDefault();
     openModal(index);
+  });
+
+  // anything else that points at a case study (the newspaper scene does)
+  document.addEventListener("click", (e) => {
+    const trigger = e.target.closest("[data-open-project]");
+    if (!trigger) return;
+    const index = Number(trigger.getAttribute("data-open-project"));
+    if (I18N.data().projects[index] && I18N.data().projects[index].details) openModal(index);
   });
 
   // a case study open when the language flips gets rebuilt in place, so the
@@ -190,42 +203,6 @@ function buildProjectDetails(p) {
   `;
 }
 
-/* ---------------- orrery: pointer parallax ----------------
-   The hero orrery is pure CSS; this only leans the whole 3D stage a few
-   degrees toward the cursor so the depth reads as depth. Pointer-only —
-   touch devices and reduced-motion users get the static tilt. */
-function initOrrery() {
-  const orrery = document.getElementById("orrery");
-  const stage = document.getElementById("orrery-stage");
-  if (!orrery || !stage) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  if (!window.matchMedia("(pointer: fine)").matches) return;
-
-  const MAX = 9; // degrees
-  let frame;
-
-  function lean(e) {
-    if (frame) return;
-    frame = requestAnimationFrame(() => {
-      frame = null;
-      const box = orrery.getBoundingClientRect();
-      // -1 … 1 relative to the orrery's centre, damped past its own bounds
-      const dx = (e.clientX - (box.left + box.width / 2)) / (box.width * 1.6);
-      const dy = (e.clientY - (box.top + box.height / 2)) / (box.height * 1.6);
-      const clamp = (n) => Math.max(-1, Math.min(1, n));
-      stage.style.setProperty("--ty", (clamp(dx) * MAX).toFixed(2) + "deg");
-      stage.style.setProperty("--tx", (clamp(-dy) * MAX).toFixed(2) + "deg");
-    });
-  }
-
-  window.addEventListener("mousemove", lean, { passive: true });
-  window.addEventListener("mouseout", (e) => {
-    if (e.relatedTarget) return;         // still inside the document
-    stage.style.setProperty("--ty", "0deg");
-    stage.style.setProperty("--tx", "0deg");
-  });
-}
-
 /* ---------------- ambient butterflies ---------------- */
 function initButterflies() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -278,14 +255,45 @@ function renderContent() {
   const desc = document.querySelector('meta[name="description"]');
   if (desc) desc.setAttribute("content", I18N.t("doc.description"));
 
-  document.getElementById("hero-name").textContent = D.name;
-  document.getElementById("about-text").textContent = D.about;
   document.getElementById("about-location").textContent = D.location;
   document.getElementById("about-focus").textContent = D.focus;
   document.getElementById("about-status").textContent = D.status;
   document.getElementById("resume-link").href = D.resumeUrl;
+  document.getElementById("cta-resume").href = D.resumeUrl;
   document.getElementById("footer-text").textContent =
     I18N.t("footer.text", { year: new Date().getFullYear() });
+
+  // about — one span per word, so the scene can light them up like
+  // subtitles as you scroll. Split on spaces only: Arabic letters join
+  // within a word, never across one, so this can't break the shaping.
+  document.getElementById("about-text").innerHTML = D.about
+    .split(/\s+/).map((w) => `<span class="w">${escapeHtml(w)}</span>`).join(" ");
+
+  // the phone in scene 01 — the first four projects, by their short name
+  // (or the part of the title before the colon). "Live" is read from the
+  // English badge so it holds in either language.
+  document.getElementById("ch-rows").innerHTML = D.projects.slice(0, 4).map((p, i) => {
+    const live = /live/i.test(siteData.projects[i].badge || "");
+    return `
+      <li class="ch-widget ch-row">
+        <span class="ch-row-icon">${p.emoji}</span>
+        <span class="ch-row-text"><b>${escapeHtml(p.short || p.title.split(":")[0].trim())}</b><small>${escapeHtml(p.badge || p.tags[0])}</small></span>
+        <i class="ch-row-dot${live ? " is-live" : ""}"></i>
+      </li>`;
+  }).join("");
+
+  // the newspaper scene
+  const P = D.press;
+  document.getElementById("press-lead").textContent = P.lead;
+  const pressImg = document.getElementById("press-img");
+  pressImg.alt = P.alt;
+  pressImg.src = P.image;
+  document.getElementById("press-case").setAttribute("data-open-project", P.project);
+  document.getElementById("press-subs").innerHTML = P.beats.map((b, i) => `
+    <li class="press-sub" data-beat="${i}">
+      ${b.original ? `<span class="press-sub-original" dir="rtl" lang="ar">${escapeHtml(b.original)}</span>` : ""}
+      <span class="press-sub-text">${escapeHtml(b.text)}</span>
+    </li>`).join("");
 
   // skills
   const skillsGrid = document.getElementById("skills-grid");
@@ -296,21 +304,22 @@ function renderContent() {
     </div>
   `).join("");
 
-  // marquee
-  const track = document.getElementById("marquee-track");
-  const items = [...D.marquee, ...D.marquee]
-    .map((m) => `<span>${escapeHtml(m)} ✦</span>`).join("");
-  track.innerHTML = items;
+  // marquee — two rows running opposite ways, the second one reversed so
+  // the same word never lines up twice
+  const row = (list) => [...list, ...list, ...list].map((m) => `<span>${escapeHtml(m)}<i>✦</i></span>`).join("");
+  document.getElementById("marquee-track").innerHTML = row(D.marquee);
+  document.getElementById("marquee-track-2").innerHTML = row([...D.marquee].reverse());
 
-  // projects — a card is only rendered as a link when there's actually
-  // something behind it: a case study to open, or a real URL to visit.
-  // Anything else is a plain div, so no visitor is invited to click a
-  // "view project →" that can't go anywhere.
+  // projects, as frames on a film strip — a card is only rendered as a link
+  // when there's actually something behind it: a case study to open, or a
+  // real URL to visit. Anything else is a plain div, so no visitor is
+  // invited to click a "view project →" that can't go anywhere.
   const projectsGrid = document.getElementById("projects-grid");
   projectsGrid.innerHTML = D.projects.map((p, i) => {
     const hasUrl = p.link && p.link !== "#";
     const clickable = !!p.details || hasUrl;
     const inner = `
+      <span class="frame-no">${escapeHtml(I18N.t("work.frame"))} ${String(i + 1).padStart(2, "0")}</span>
       ${p.badge ? `<span class="project-sticker"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
       <span class="project-emoji">${p.emoji}</span>
       <h3 class="project-title">${escapeHtml(p.title)}</h3>
@@ -323,19 +332,26 @@ function renderContent() {
       : `<div class="project-card is-static" data-project="${i}">${inner}</div>`;
   }).join("");
 
-  // certifications — cards link out to the verification page when there is one
+  // certifications, as cinema tickets — they link out to the verification
+  // page when there is one
   const certsGrid = document.getElementById("certs-grid");
-  certsGrid.innerHTML = D.courses.map((c) => {
+  certsGrid.innerHTML = D.courses.map((c, i) => {
     const body = `
-      <span class="cert-emoji">${c.emoji}</span>
-      <h3 class="cert-title">${escapeHtml(c.name)}</h3>
-      <p class="cert-provider">${escapeHtml(c.provider)}</p>
-      ${c.date ? `<span class="cert-date">${escapeHtml(c.date)}</span>` : ""}
-      ${c.url ? `<span class="cert-link">${escapeHtml(I18N.t("cert.verify"))}</span>` : ""}
+      <span class="ticket-main">
+        <span class="cert-emoji">${c.emoji}</span>
+        <span class="cert-title">${escapeHtml(c.name)}</span>
+        <span class="cert-provider">${escapeHtml(c.provider)}</span>
+        ${c.url ? `<span class="cert-link">${escapeHtml(I18N.t("cert.verify"))}</span>` : ""}
+      </span>
+      <span class="ticket-stub" aria-hidden="true">
+        <span class="ticket-admit">${escapeHtml(I18N.t("cert.admit"))}</span>
+        <span class="cert-date">${escapeHtml(c.date || "—")}</span>
+        <span class="ticket-no">№ ${String(i + 1).padStart(3, "0")}</span>
+      </span>
     `;
     return c.url
-      ? `<a class="cert-card" href="${c.url}" target="_blank" rel="noopener">${body}</a>`
-      : `<div class="cert-card">${body}</div>`;
+      ? `<a class="cert-card ticket" href="${c.url}" target="_blank" rel="noopener">${body}</a>`
+      : `<div class="cert-card ticket">${body}</div>`;
   }).join("");
 
   // contact links
@@ -343,6 +359,18 @@ function renderContent() {
   contactLinks.innerHTML = D.social.map((s) => `
     <a href="${s.url}" target="_blank" rel="noopener">${iconFor(s.icon)} ${escapeHtml(s.label)}</a>
   `).join("");
+
+  // end credits
+  const credits = [
+    ["credits.directed", D.fullName || D.name],
+    ["credits.written", I18N.t("credits.writtenVal")],
+    ["credits.motion", "GSAP · ScrollTrigger"],
+    ["credits.location", D.location],
+    ["credits.cameo", "laila.ai 🧠"]
+  ];
+  document.getElementById("credits-roll").innerHTML = credits.map(([k, v]) =>
+    `<div><dt>${escapeHtml(I18N.t(k))}</dt><dd>${escapeHtml(v)}</dd></div>`
+  ).join("");
 }
 
 function escapeHtml(str) {
@@ -360,87 +388,6 @@ function iconFor(name) {
     whatsapp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.2 0 4.27.86 5.82 2.42a8.2 8.2 0 0 1 2.42 5.82c0 4.54-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.13.82.84-3.05-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.55 3.7-8.23 8.25-8.23zm-4.53 4.6c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.55c.13.16 1.72 2.7 4.23 3.68 2.08.83 2.5.66 2.96.62.45-.04 1.45-.6 1.65-1.17.2-.58.2-1.08.14-1.18-.06-.1-.23-.16-.48-.28-.25-.13-1.45-.72-1.68-.8-.22-.08-.39-.13-.55.13-.16.25-.63.8-.78.97-.14.16-.28.18-.53.06-.25-.13-1.06-.4-2.02-1.26-.75-.67-1.25-1.5-1.4-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.12-.14.16-.25.24-.4.08-.16.04-.31-.02-.44-.06-.13-.55-1.36-.77-1.86-.2-.48-.4-.42-.55-.42h-.47z"/></svg>'
   };
   return icons[name] || "";
-}
-
-/* ---------------- boot sequence ---------------- */
-function initBootSequence() {
-  const screen = document.getElementById("boot-screen");
-  const log = document.getElementById("boot-log");
-  const replayBtn = document.getElementById("replay-boot");
-
-  // read at play() time, not once at init — "replay boot sequence" after a
-  // language switch should replay it in the language now on screen
-  function bootLines() {
-    return [
-      { text: I18N.t("boot.l1"), ok: false },
-      { text: I18N.t("boot.l2"), ok: true },
-      { text: I18N.t("boot.l3"), ok: true },
-      { text: I18N.t("boot.l4"), ok: true },
-      { text: I18N.t("boot.l5"), ok: true },
-      { text: I18N.t("boot.l6", { name: siteData.name.toLowerCase() }), ok: false }
-    ];
-  }
-
-  let lines = bootLines();
-  let skipped = false;
-  let running = false;
-
-  function play() {
-    lines = bootLines();
-    running = true;
-    skipped = false;
-    log.innerHTML = "";
-    screen.classList.remove("hidden");
-    screen.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-    typeLines(0);
-  }
-
-  function typeLines(i) {
-    if (skipped) return finish();
-    if (i >= lines.length) {
-      setTimeout(finish, 500);
-      return;
-    }
-    const { text, ok } = lines[i];
-    let charIndex = 0;
-    const lineEl = document.createElement("div");
-    log.appendChild(lineEl);
-
-    const typer = setInterval(() => {
-      if (skipped) { clearInterval(typer); return finish(); }
-      lineEl.textContent = text.slice(0, ++charIndex);
-      if (charIndex >= text.length) {
-        clearInterval(typer);
-        if (ok) lineEl.innerHTML = text + ' <span class="ok">[OK]</span>';
-        setTimeout(() => typeLines(i + 1), 180);
-      }
-    }, 16);
-  }
-
-  function finish() {
-    running = false;
-    screen.classList.add("hidden");
-    screen.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-    sessionStorage.setItem("laila-booted", "1");
-  }
-
-  function skip() {
-    if (running) skipped = true;
-  }
-
-  document.addEventListener("keydown", skip, { once: false });
-  screen.addEventListener("click", skip);
-
-  replayBtn.addEventListener("click", play);
-
-  if (!sessionStorage.getItem("laila-booted")) {
-    play();
-  } else {
-    screen.classList.add("hidden");
-    screen.setAttribute("aria-hidden", "true");
-  }
 }
 
 /* ---------------- custom cursor ---------------- */
@@ -467,22 +414,29 @@ function initCursor() {
     requestAnimationFrame(lerpLoop);
   })();
 
+  const HOVERABLE = "a, button, input, .project-card:not(.is-static), [data-open-ai], .wpl-char, .wpl-cell";
   document.addEventListener("mouseover", (e) => {
-    if (e.target.closest("a, button, input, .project-card:not(.is-static), [data-open-ai]")) {
-      ring.classList.add("hovering");
-    }
+    if (e.target.closest(HOVERABLE)) ring.classList.add("hovering");
   });
   document.addEventListener("mouseout", (e) => {
-    if (e.target.closest("a, button, input, .project-card:not(.is-static), [data-open-ai]")) {
-      ring.classList.remove("hovering");
-    }
+    if (e.target.closest(HOVERABLE)) ring.classList.remove("hovering");
   });
 }
 
-/* ---------------- nav / scroll cue ---------------- */
+/* ---------------- replay the opening ----------------
+   Rewinds the whole film — every scrubbed scene plays backwards on the
+   way up — then runs the poster's intro again once it's back on screen. */
 function initNav() {
-  document.getElementById("scroll-cue").addEventListener("click", () => {
-    document.getElementById("about").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("replay-opening").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const started = performance.now();
+    (function waitForTop() {
+      if (window.scrollY < 4 || performance.now() - started > 4000) {
+        Poster.replay();
+        return;
+      }
+      requestAnimationFrame(waitForTop);
+    })();
   });
 }
 
@@ -511,42 +465,6 @@ function initTheme() {
   }
 }
 
-/* ---------------- typing role effect ----------------
-   Restartable: a language switch calls this again, so the previous
-   loop has to be cancelled or two timers end up typing different
-   languages into the same element. */
-let typedTimer = null;
-function initTypedRole() {
-  const el = document.getElementById("typed-role");
-  const roles = I18N.data().roles;
-  let roleIndex = 0, charIndex = 0, deleting = false;
-
-  clearTimeout(typedTimer);
-  el.textContent = "";
-
-  function tick() {
-    const current = roles[roleIndex];
-    if (!deleting) {
-      charIndex++;
-      el.textContent = current.slice(0, charIndex);
-      if (charIndex === current.length) {
-        deleting = true;
-        typedTimer = setTimeout(tick, 1400);
-        return;
-      }
-    } else {
-      charIndex--;
-      el.textContent = current.slice(0, charIndex);
-      if (charIndex === 0) {
-        deleting = false;
-        roleIndex = (roleIndex + 1) % roles.length;
-      }
-    }
-    typedTimer = setTimeout(tick, deleting ? 35 : 65);
-  }
-  tick();
-}
-
 /* ---------------- scroll reveal ---------------- */
 function initScrollReveal() {
   const items = document.querySelectorAll("[data-reveal]");
@@ -570,9 +488,6 @@ function initScrollProgress() {
     bar.style.width = scrolled + "%";
   }, { passive: true });
 }
-
-/* ---------------- marquee (just needs the animation, CSS handles it) --- */
-function initMarquee() { /* content injected in renderContent() */ }
 
 /* ---------------- skill bars fill on view ---------------- */
 function initSkillBars() {
@@ -598,7 +513,7 @@ function initAI() {
   const orb = document.getElementById("ai-orb");
 
   const CHIP_KEYS = [
-    "chip.who", "chip.help", "chip.projects", "chip.weather", "chip.time",
+    "chip.who", "chip.press", "chip.help", "chip.projects", "chip.weather", "chip.time",
     "chip.math", "chip.contact", "chip.joke", "chip.surprise"
   ];
 

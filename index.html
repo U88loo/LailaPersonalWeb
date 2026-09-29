@@ -18,37 +18,27 @@
      Arabic is loaded alongside them and takes over under [dir="rtl"]. It's
      loaded in both languages because the ع on the language toggle needs it. -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=18">
-<!-- Set lang/dir before first paint — otherwise an Arabic visitor gets a
-     visible LTR→RTL flip once i18n.js runs. Mirrors the pattern the theme
-     toggle uses via localStorage. -->
+<link rel="stylesheet" href="css/style.css?v=19">
+<link rel="stylesheet" href="css/cinema.css?v=1">
+<!-- Set lang/dir and theme before first paint — otherwise an Arabic visitor
+     gets a visible LTR→RTL flip, and a dark-mode visitor a white flash. -->
 <script>
 (function () {
+  var root = document.documentElement;
   try {
     var saved = localStorage.getItem("laila-lang");
     var lang = (saved === "ar" || saved === "en")
       ? saved
       : ((navigator.language || "en").toLowerCase().indexOf("ar") === 0 ? "ar" : "en");
-    var root = document.documentElement;
     root.setAttribute("lang", lang);
     root.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+    var theme = localStorage.getItem("laila-theme");
+    if (theme === "dark" || theme === "light") root.setAttribute("data-theme", theme);
   } catch (e) { /* storage blocked — i18n.js still sorts it out on load */ }
 })();
 </script>
 </head>
 <body>
-
-<!-- Boot / intro sequence -->
-<div id="boot-screen" aria-hidden="true">
-  <div class="boot-window">
-    <div class="boot-bar">
-      <span class="boot-dot r"></span><span class="boot-dot y"></span><span class="boot-dot g"></span>
-      <span class="boot-title" data-i18n="boot.title">laila.OS · boot log</span>
-    </div>
-    <pre id="boot-log" class="boot-log"></pre>
-    <div class="boot-hint" data-i18n="boot.hint">press any key to skip</div>
-  </div>
-</div>
 
 <!-- Custom cursor -->
 <div id="cursor-dot" class="cursor-dot"></div>
@@ -57,10 +47,11 @@
 <!-- Secret doorway transition — type "vault" anywhere on the page -->
 <div id="portal-overlay" aria-hidden="true"></div>
 
-<!-- Generative background -->
+<!-- Generative background + a whisper of film grain over everything -->
 <canvas id="bg-canvas"></canvas>
 <div class="bg-glow bg-glow-1"></div>
 <div class="bg-glow bg-glow-2"></div>
+<div class="film-grain" aria-hidden="true"></div>
 
 <!-- Scroll progress -->
 <div id="scroll-progress"></div>
@@ -70,6 +61,7 @@
   <a href="#home" class="nav-logo">L<span>.</span></a>
   <nav class="nav-links">
     <a href="#about" data-i18n="nav.about">about</a>
+    <a href="#press" data-i18n="nav.press">press</a>
     <a href="#work" data-i18n="nav.work">work</a>
     <a href="#skills" data-i18n="nav.skills">skills</a>
     <a href="#certs" data-i18n="nav.certs">certs</a>
@@ -89,152 +81,216 @@
   </div>
 </header>
 
-<main id="home">
+<!-- The scene HUD: which scene you're in, and a timecode that runs with
+     the scroll. Decorative, so hidden from assistive tech. -->
+<div class="cine-hud" aria-hidden="true">
+  <span class="hud-rec"></span>
+  <span class="hud-scene" id="hud-scene">SC 00</span>
+  <span class="hud-title" id="hud-title">opening titles</span>
+  <span class="hud-tc" id="hud-tc">00:00:00:00</span>
+  <span class="hud-cue" data-i18n="open.cue">scroll to begin</span>
+</div>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-text" data-reveal>
-      <p class="eyebrow" data-i18n="hero.eyebrow">&lt;hello world/&gt;</p>
-      <h1><span data-i18n="hero.greet">Hi, I'm</span> <span class="grad-text" id="hero-name">Laila</span>.<br><span data-i18n="hero.iam">I'm a</span> <span id="typed-role" class="typed-role"></span><span class="caret">|</span></h1>
-      <p class="hero-sub" data-i18n="hero.sub">Software engineering graduate, fresh out of the University of Bahrain as of September 2026. I care about design, testing, and AI, and about building things that actually solve problems. This site is one of them; the assistant in the corner actually answers questions about me.</p>
-      <div class="hero-cta">
-        <a href="#work" class="btn btn-primary" data-i18n="hero.cta1">see the work</a>
-        <button class="btn btn-outline" data-open-ai data-i18n="hero.cta2">ask the AI about me →</button>
-      </div>
-      <div class="hero-tags">
-        <span data-i18n="hero.tag1">#solvesRealProblems</span><span data-i18n="hero.tag2">#testEverything</span><span data-i18n="hero.tag3">#AIcurious</span>
-      </div>
-    </div>
+<main>
 
-    <!-- The orrery: three orbital planes in real 3D (nodes pass behind the
-         core), inside an instrument dial with a slow sweep. Decorative —
-         hidden from assistive tech, and it holds still under
-         prefers-reduced-motion. -->
-    <div class="hero-visual" data-reveal>
-      <div class="orrery" id="orrery" aria-hidden="true">
-
-        <div class="dial">
-          <span class="dial-ticks"></span>
-          <span class="dial-ticks dial-ticks-major"></span>
-          <span class="dial-edge"></span>
-          <span class="dial-sweep"></span>
-        </div>
-
-        <!-- the core's ambient shadow, kept OUTSIDE the 3D stage on purpose
-             (a blurred shadow inside a preserve-3d subtree rasterises
-             against its square layer bounds and shows as a box) -->
-        <span class="core-shadow"></span>
-
-        <div class="orrery-stage" id="orrery-stage">
-          <div class="plane plane-1">
-            <span class="plane-ring"></span>
-            <span class="plane-spin"><i class="node node-lg"></i></span>
-          </div>
-
-          <div class="plane plane-2">
-            <span class="plane-ring"></span>
-            <span class="plane-spin">
-              <i class="node"></i>
-              <i class="node node-far"></i>
-            </span>
-          </div>
-
-          <div class="plane plane-3">
-            <span class="plane-ring"></span>
-            <span class="plane-spin">
-              <i class="node node-wing">
-                <svg viewBox="0 0 64 64" aria-hidden="true">
-                  <path d="M32 30 C20 6 2 10 6 26 C9 38 24 34 32 30 Z"/>
-                  <path d="M32 30 C44 6 62 10 58 26 C55 38 40 34 32 30 Z"/>
-                  <path d="M32 32 C22 50 6 54 8 44 C10 36 24 34 32 32 Z"/>
-                  <path d="M32 32 C42 50 58 54 56 44 C54 36 40 34 32 32 Z"/>
-                  <rect x="30.5" y="25" width="3" height="17" rx="1.5"/>
-                </svg>
-              </i>
-            </span>
-          </div>
-
-          <div class="core">
-            <span class="core-halo"></span>
-            <span class="core-halo core-halo-2"></span>
-            <span class="core-mark">L</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <button class="scroll-cue" id="scroll-cue" aria-label="Scroll down">
-      <span></span> <span data-i18n="hero.scroll">scroll</span>
-    </button>
+  <!-- SCENE 00 · OPENING TITLES
+       The waving poster — js/poster.js draws everything inside #poster. -->
+  <section id="home" class="scene scene-open" data-scene="0">
+    <h1 class="sr-only" data-i18n="open.title">Laila Haji · Software Engineer</h1>
+    <div id="poster" class="poster"></div>
   </section>
 
-  <!-- ABOUT -->
-  <section id="about" class="section">
-    <p class="section-kicker" data-reveal data-i18n="kicker.about">01 · about</p>
-    <div class="about-grid">
-      <h2 class="about-lead" data-reveal data-i18n-html="about.lead">
-        I like software that feels a little <em>alive</em>: interfaces with
-        personality, details you notice on the second visit, and code that's
-        honest about what it's doing.
+  <!-- SCENE 01 · THE PREMISE
+       A pinned, scrubbed sequence (js/cinema.js): the titles blur back, a deep
+       navy card rises and fills the screen, a phone flies in with the numbers,
+       then the card pulls back and flies off to reveal the call to action.
+       Without motion it's simply the three blocks stacked. -->
+  <section id="premise" class="scene cine-hero" data-scene="1">
+    <div class="ch-grid" aria-hidden="true"></div>
+
+    <div class="ch-titles">
+      <p class="scene-kicker" data-i18n="kicker.premise">scene 01 · the premise</p>
+      <h2 class="ch-title">
+        <span class="ch-line ch-line-1" data-i18n="cine.line1">Every system has a story.</span>
+        <span class="ch-line ch-line-2" data-i18n="cine.line2">This one is mine.</span>
       </h2>
-      <div class="about-body" data-reveal>
-        <p id="about-text">
-          This is placeholder bio copy. Open <code>js/data.js</code> and edit
-          <code>siteData.about</code> to make it yours. Talk about what you
-          build, what you're curious about, and what you're currently
-          leveling up in.
-        </p>
-        <ul class="about-facts">
-          <li><span>📍</span> <span id="about-location">Somewhere, Earth</span></li>
-          <li><span>🛠️</span> <span id="about-focus">Building things that think a little</span></li>
-          <li><span>🎧</span> <span id="about-status">Currently vibing to: lo-fi + old error messages</span></li>
-        </ul>
-        <a id="resume-link" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm" data-i18n="about.resume">download résumé ↓</a>
+    </div>
+
+    <div class="ch-cta">
+      <h3 class="ch-cta-title" data-i18n="cine.ctaTitle">Roll the tape.</h3>
+      <p class="ch-cta-desc" data-i18n="cine.ctaDesc">A front-page headline, four shipped systems, and the person behind them. Keep scrolling.</p>
+      <div class="ch-cta-btns">
+        <a id="cta-resume" href="assets/LailaHajiResume.pdf" target="_blank" rel="noopener" class="btn-modern-light">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 2v6h6M12 12v6m-3-3 3 3 3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><small data-i18n="cine.resumeSmall">download the</small><b data-i18n="cine.resume">Résumé</b></span>
+        </a>
+        <button type="button" class="btn-modern-dark" data-open-ai>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor"/></svg>
+          <span><small data-i18n="cine.askSmall">ask the assistant</small><b>laila.ai</b></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="ch-card-layer">
+      <div class="ch-card" id="ch-card">
+        <div class="ch-sheen" aria-hidden="true"></div>
+        <div class="ch-card-grid">
+
+          <div class="ch-brand"><span class="ch-brand-text" data-i18n="cine.brand">LAILA</span></div>
+
+          <div class="ch-mockup">
+            <div class="ch-mockup-scale">
+              <div class="ch-phone" id="ch-phone" aria-hidden="true">
+                <i class="ch-hw" style="top:120px;height:25px"></i>
+                <i class="ch-hw" style="top:160px;height:45px"></i>
+                <i class="ch-hw" style="top:220px;height:45px"></i>
+                <i class="ch-hw ch-hw-r" style="top:170px;height:70px"></i>
+                <div class="ch-screen">
+                  <div class="ch-glare"></div>
+                  <div class="ch-island"><span></span></div>
+                  <div class="ch-app">
+                    <div class="ch-widget ch-app-head">
+                      <div><span class="ch-eyebrow">laila.OS</span><span class="ch-app-title" data-i18n="cine.appTitle">Portfolio</span></div>
+                      <span class="ch-avatar">LH</span>
+                    </div>
+                    <div class="ch-widget ch-ring">
+                      <svg viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="60" class="ch-ring-track"/>
+                        <circle cx="75" cy="75" r="60" class="ch-ring-progress"/>
+                      </svg>
+                      <div class="ch-ring-label">
+                        <span class="ch-counter" data-count="74">74</span>
+                        <span class="ch-metric" data-i18n="cine.metric">K lines shipped</span>
+                      </div>
+                    </div>
+                    <ul class="ch-rows" id="ch-rows"></ul>
+                    <span class="ch-homebar"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ch-badge ch-badge-1">
+                <span class="ch-badge-icon">📰</span>
+                <span><b data-i18n="cine.badge1">In the news</b><small data-i18n="cine.badge1sub">Akhbar Al Khaleej · Sep 2026</small></span>
+              </div>
+              <div class="ch-badge ch-badge-2">
+                <span class="ch-badge-icon">🎓</span>
+                <span><b data-i18n="cine.badge2">Graduated</b><small data-i18n="cine.badge2sub">B.Sc. Software Eng. · UoB</small></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ch-copy">
+            <h3 class="ch-copy-title" data-i18n="cine.heading">Software that ships to real people.</h3>
+            <p class="ch-copy-desc" data-i18n-html="cine.desc">I'm <b>Laila</b>, a software engineering graduate from the University of Bahrain. I've built systems for a counselling clinic, a car-accessories shop and a herbs brand, and two of them are used every single day.</p>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SKILLS -->
-  <section id="skills" class="section">
-    <p class="section-kicker" data-reveal data-i18n="kicker.skills">02 · skills</p>
-    <h2 class="section-title" data-reveal data-i18n="title.skills">Tools I reach for</h2>
-    <div id="skills-grid" class="skills-grid" data-reveal></div>
-    <div class="marquee" data-reveal>
-      <div class="marquee-track" id="marquee-track"></div>
+  <!-- SCENE 02 · THE HEADLINE
+       The newspaper spins in, then the camera pushes in on the headline, the
+       photo and the paragraphs, with subtitles translating as it goes. -->
+  <section id="press" class="scene press" data-scene="2">
+    <div class="press-bar press-bar-top" aria-hidden="true"></div>
+    <div class="press-bar press-bar-bottom" aria-hidden="true"></div>
+
+    <header class="press-head">
+      <p class="scene-kicker" data-i18n="kicker.press">scene 02 · the headline</p>
+      <h2 class="press-title" data-i18n="press.title">It made the paper.</h2>
+      <p class="press-lead" id="press-lead"></p>
+      <p class="press-note" data-i18n="press.translated">subtitles translated from the Arabic</p>
+    </header>
+
+    <div class="press-camera">
+      <figure class="press-paper" id="press-paper">
+        <img id="press-img" src="assets/press-akhbar-alkhaleej-2026.webp" width="1080" height="1350" alt="" decoding="async">
+        <span class="press-stamp" data-i18n="press.stamp" aria-hidden="true">FEATURED</span>
+      </figure>
+    </div>
+
+    <ol class="press-subs" id="press-subs"></ol>
+
+    <div class="press-cta">
+      <button type="button" class="btn btn-primary btn-sm" id="press-case" data-i18n="press.caseStudy">read the case study →</button>
+      <a class="btn btn-outline btn-sm" href="assets/press-akhbar-alkhaleej-2026.webp" target="_blank" rel="noopener" data-i18n="press.open">open the full clipping ↗</a>
     </div>
   </section>
 
-  <!-- PROJECTS -->
-  <section id="work" class="section">
-    <p class="section-kicker" data-reveal data-i18n="kicker.work">03 · selected work</p>
-    <h2 class="section-title" data-reveal data-i18n="title.work">Things I've shipped</h2>
-    <div id="projects-grid" class="projects-grid" data-reveal></div>
+  <!-- SCENE 03 · THE PERSON -->
+  <section id="about" class="scene section about" data-scene="3">
+    <p class="scene-kicker" data-reveal data-i18n="kicker.about">scene 03 · the person</p>
+    <h2 class="about-lead" data-reveal data-i18n-html="about.lead">
+      I like software that feels a little <em>alive</em>: interfaces with
+      personality, details you notice on the second visit, and code that's
+      honest about what it's doing.
+    </h2>
+    <p id="about-text" class="about-reel"></p>
+    <div class="about-foot" data-reveal>
+      <ul class="about-facts">
+        <li><span>📍</span> <span id="about-location">Somewhere, Earth</span></li>
+        <li><span>🎓</span> <span id="about-focus">Building things that think a little</span></li>
+        <li><span>🧪</span> <span id="about-status">Currently building</span></li>
+      </ul>
+      <a id="resume-link" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm" data-i18n="about.resume">download résumé ↓</a>
+    </div>
   </section>
 
-  <!-- CERTIFICATIONS -->
-  <section id="certs" class="section">
-    <p class="section-kicker" data-reveal data-i18n="kicker.certs">04 · certifications</p>
+  <!-- SCENE 04 · THE WORK
+       A film strip: pinned, and scrolled sideways on wide screens. -->
+  <section id="work" class="scene work" data-scene="4">
+    <div class="work-pin">
+      <header class="work-head section">
+        <p class="scene-kicker" data-i18n="kicker.work">scene 04 · the work</p>
+        <h2 class="section-title" data-i18n="title.work">Things I've shipped</h2>
+        <p class="work-hint" data-i18n="work.hint">keep scrolling, the reel moves sideways</p>
+      </header>
+      <div class="filmstrip">
+        <div id="projects-grid" class="projects-track"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 05 · THE TOOLKIT -->
+  <section id="skills" class="scene skills" data-scene="5">
+    <div class="section">
+      <p class="scene-kicker" data-reveal data-i18n="kicker.skills">scene 05 · the toolkit</p>
+      <h2 class="section-title" data-reveal data-i18n="title.skills">Tools I reach for</h2>
+      <div id="skills-grid" class="skills-grid" data-reveal></div>
+    </div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-row"><div class="marquee-track" id="marquee-track"></div></div>
+      <div class="marquee-row marquee-row-2"><div class="marquee-track" id="marquee-track-2"></div></div>
+    </div>
+  </section>
+
+  <!-- SCENE 06 · THE CREDENTIALS -->
+  <section id="certs" class="scene section certs" data-scene="6">
+    <p class="scene-kicker" data-reveal data-i18n="kicker.certs">scene 06 · the credentials</p>
     <h2 class="section-title" data-reveal data-i18n="title.certs">Training and credentials</h2>
-    <div id="certs-grid" class="certs-grid" data-reveal></div>
+    <div id="certs-grid" class="certs-grid"></div>
   </section>
 
-  <!-- CONTACT -->
-  <section id="contact" class="section contact-section">
-    <p class="section-kicker" data-reveal data-i18n="kicker.contact">05 · contact</p>
-    <h2 class="section-title" data-reveal data-i18n="title.contact">Let's build something.</h2>
+  <!-- SCENE 07 · THE END? -->
+  <section id="contact" class="scene section contact-section" data-scene="7">
+    <p class="scene-kicker" data-reveal data-i18n="kicker.contact">scene 07 · the end?</p>
+    <h2 class="contact-title" data-reveal data-i18n="title.contact">Let's build something.</h2>
     <p class="contact-sub" data-reveal data-i18n-html="contact.sub">
       Fastest way in is the assistant: press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd>
       and ask it for my email. Or just use the old-fashioned links below.
     </p>
     <div class="contact-links" id="contact-links" data-reveal></div>
+    <p class="contact-tbc" data-reveal data-i18n="contact.tbc">to be continued…</p>
   </section>
 
 </main>
 
-<footer class="footer">
+<footer class="footer credits">
+  <dl class="credits-roll" id="credits-roll"></dl>
   <p id="footer-text"></p>
-  <button id="replay-boot" class="link-btn" data-i18n="footer.replay">replay boot sequence ↻</button>
+  <button id="replay-opening" class="link-btn" data-i18n="footer.replay">replay the opening ↻</button>
 </footer>
 
 <!-- Floating AI orb -->
@@ -274,12 +330,17 @@
 <div id="toast" class="toast"></div>
 
 <!-- ?v= is a cache-buster: bump it after editing any of these so browsers
-     fetch the new file instead of serving a stale copy. -->
-<script src="js/data.js?v=19"></script>
-<script src="js/data.ar.js?v=19"></script>
-<script src="js/i18n.js?v=18"></script>
+     fetch the new file instead of serving a stale copy. GSAP is vendored in
+     js/vendor so the site still has no build step and no CDN to depend on. -->
+<script src="js/vendor/gsap.min.js?v=3.15.0"></script>
+<script src="js/vendor/ScrollTrigger.min.js?v=3.15.0"></script>
+<script src="js/data.js?v=20"></script>
+<script src="js/data.ar.js?v=20"></script>
+<script src="js/i18n.js?v=19"></script>
 <script src="js/particles.js?v=18"></script>
-<script src="js/ai-assistant.js?v=19"></script>
-<script src="js/app.js?v=18"></script>
+<script src="js/ai-assistant.js?v=20"></script>
+<script src="js/poster.js?v=1"></script>
+<script src="js/cinema.js?v=1"></script>
+<script src="js/app.js?v=19"></script>
 </body>
 </html>
