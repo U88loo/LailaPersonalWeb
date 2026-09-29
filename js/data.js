@@ -78,6 +78,51 @@ const siteData = {
     }
   ],
 
+  // The newspaper feature — scene 02 on the page. Each beat is one camera
+  // move plus one subtitle. `focus` is where the camera pushes in, in pixels
+  // of the 1080 × 1350 scan: { x, y } is the centre of the region, { w, h }
+  // its size. `original` is the Arabic the subtitle translates; it shows
+  // above the English and is blanked in the Arabic overlay.
+  press: {
+    image: "assets/press-akhbar-alkhaleej-2026.webp",
+    project: 1, // opens this project's case study (index into `projects`)
+    alt:
+      "Clipping from Akhbar Al Khaleej, Monday 21 September 2026, headlined " +
+      "“From the University of Bahrain, she developed an electronic system for the centre”, " +
+      "with a photo from the honouring at the Aisha Yateem Family Counselling Centre.",
+    lead:
+      "On 21 September 2026, Akhbar Al Khaleej ran a story on the case-management " +
+      "system I built for the Aisha Yateem Family Counselling Centre, and on the " +
+      "centre honouring me for it.",
+    beats: [
+      {
+        focus: { x: 540, y: 530, w: 1080, h: 1060 },
+        text: "Akhbar Al Khaleej · Monday, 21 September 2026",
+        original: "أخبار الخليج · الإثنين 21 سبتمبر 2026"
+      },
+      {
+        focus: { x: 530, y: 405, w: 990, h: 80 },
+        text: "“From the University of Bahrain, she developed an electronic system for the centre”",
+        original: "«من جامعة البحرين طوّرت نظاماً إلكترونياً للمركز»"
+      },
+      {
+        focus: { x: 364, y: 643, w: 640, h: 365 },
+        text: "“The centre honoured University of Bahrain student Laila Haji, in appreciation of her efforts and her contribution during her time at the centre.”",
+        original: "«كرّم المركز … الطالبة الآنسة ليلى حاجي، من جامعة البحرين … تقديراً لجهودها وإسهامها خلال فترة وجودها بالمركز.»"
+      },
+      {
+        focus: { x: 866, y: 878, w: 320, h: 105 },
+        text: "“She created and developed an electronic system for the centre, helping to organise its procedures and administrative tasks and to raise the efficiency of its services.”",
+        original: "«وقد عملت الطالبة على إنشاء وتطوير نظام إلكتروني للمركز، بما يسهم في تنظيم عدد من الإجراءات والمهام الإدارية … ورفع كفاءة الخدمات المقدمة.»"
+      },
+      {
+        focus: { x: 531, y: 967, w: 310, h: 112 },
+        text: "“The centre's management and staff expressed their sincere thanks and appreciation to Laila Haji for her effort and initiative.”",
+        original: "«وأعربت إدارة المركز وموظفاته عن خالص الشكر والتقدير للطالبة ليلى حاجي على ما قدمته من جهد ومبادرة…»"
+      }
+    ]
+  },
+
   whatsapp: "+973 3232 3768",
 
   // TODO: swap in your real GitHub handle
@@ -155,6 +200,7 @@ const siteData = {
     {
       emoji: "🏥",
       title: "Aisha Yateem Family Counselling Centre: Case Management System",
+      short: "Aisha Yateem Centre", // for tight spots, like the phone in scene 01
       description: "A full-stack platform for a clinic's social & family counseling services: patient intakes, case logs, appointments, staff messaging, and multilingual PDF/Word/Excel exports.",
       tags: ["React", "Node.js", "SQLite", "Full-Stack"],
       badge: "Live · in use",

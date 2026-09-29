@@ -40,6 +40,17 @@ const LailaAI = (function () {
           `أهلاً! أنا ذكاء اصطناعي صغير يعيش في موقع ${d.name}. اسألني من هي، وماذا تبني، وكيف تصل إليها.`
       },
       {
+        // listed before "about" on purpose: ties go to the earlier intent, so
+        // "tell me about the newspaper article" lands here
+        name: "press",
+        keywords: ["newspaper", "news", "in the news", "in the paper", "press", "featured", "article", "akhbar", "akhbar al khaleej", "media coverage", "honoured", "honored", "honour", "recognition", "aisha yateem", "yateem"],
+        // no bare "خبر": it's a substring of "خبرة" (experience)
+        keywordsAr: ["جريدة", "الجريدة", "صحيفة", "الصحافة", "الاخبار", "في الاخبار", "اخبار الخليج", "تكريم", "كرمها", "مقال", "عائشة يتيم"],
+        reply: () => `Yes! On 21 September 2026, Bahrain's Akhbar Al Khaleej ran a story headlined "From the University of Bahrain, she developed an electronic system for the centre". It covers the case-management system ${d.name} built for the Aisha Yateem Family Counselling Centre over July and August 2026, and the centre honouring her for it on 17 September. The clipping is in the "headline" scene, I'll take you there.`,
+        replyAr: () => `نعم! في 21 سبتمبر 2026 نشرت جريدة أخبار الخليج البحرينية خبراً بعنوان «من جامعة البحرين طوّرت نظاماً إلكترونياً للمركز». يتناول الخبر نظام إدارة الحالات الذي بنته ${d.name} لمركز عائشة يتيم للإرشاد الأسري خلال شهري يوليو وأغسطس 2026، وتكريم المركز لها في 17 سبتمبر. القصاصة في مشهد "العنوان الرئيسي"، وسآخذك إليه.`,
+        action: () => scrollToSection("press")
+      },
+      {
         name: "about",
         keywords: ["who", "about", "bio", "yourself", "background", "story"],
         keywordsAr: ["من هي", "عن ليلى", "نبذة", "سيرتها", "خلفيتها", "عرفني عليها"],

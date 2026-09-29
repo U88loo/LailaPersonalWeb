@@ -5,19 +5,45 @@ in a browser, or serve it with anything static.
 
 ## What's in here
 
-- **Boot sequence** — a fake terminal boot log plays once per browser
-  session on load (skip with any key). Replay it anytime from the footer.
+The page plays like a short film as you scroll: an opening poster, then
+seven scenes. A HUD in the corner shows the scene you're in and a
+timecode that runs with the scroll.
+
+| Scene | What happens |
+|---|---|
+| **00 · opening titles** | The waving poster (`js/poster.js`). A storm of capitals streams past and shutters away, the letters of **L [A] ILA / H [A] JI** roll into place like slot reels around one giant shared *A*, the labels decode, and a hand-inked character rises from the baseline and waves. Hover a letter to re-roll it, hover or click her to wave back (her eyes follow the pointer), click the dice to roll them, click the paper to throw letters, click the signature to replay the intro. She waves again whenever you scroll back up to her. |
+| **01 · the premise** | Pinned and scrubbed: the titles blur back, a deep navy card rises and fills the screen, a phone flies in counting up to 74k lines shipped, then the card pulls back and leaves to reveal the call to action. The card's sheen and the phone follow the pointer. |
+| **02 · the headline** | The *Akhbar Al Khaleej* clipping (21 September 2026) spins in like a front page in an old film, then a camera pushes in on the headline, the photo and the paragraphs while subtitles translate the Arabic. Ends on a *featured* stamp and a link to the case study. |
+| **03 · the person** | The bio lights up word by word, at the pace you scroll. |
+| **04 · the work** | A film strip, pinned and pulled sideways, one project per frame (sprocket holes included). Frames with a case study open it. Stacks into a grid on narrow screens. |
+| **05 · the toolkit** | Skill bars plus two giant marquee rows scrubbed by the scroll. |
+| **06 · the credentials** | Certificates as cinema tickets, dealt onto the table. |
+| **07 · the end?** | Contact links, then end credits. "Replay the opening" rewinds the whole film. |
+
+The nav and HUD dim ("lights down") while a dark scene fills the screen.
+
+Motion is **opt-in**. `js/cinema.js` only adds `html.cine` — which
+switches every scene to its layered, pinned layout — once GSAP has
+loaded and the visitor hasn't asked for reduced motion. Without it each
+scene falls back to a plain stacked layout, so nothing is ever hidden
+behind an animation that can't run. Every scene is built inside one
+`gsap.matchMedia()`, so a breakpoint change or a language switch tears
+the whole film down and rebuilds it against the new layout, and the
+reader stays where they were.
+
+**Editing the newspaper scene:** each beat in `siteData.press.beats`
+(`js/data.js`) is one camera move and one subtitle. `focus` is the
+region the camera pushes in on, in pixels of the 1080 × 1350 scan
+(`x`/`y` its centre, `w`/`h` its size). Add, remove or re-aim beats
+there; the timeline is built from the list.
+
+Also on the page:
+
 - **Custom cursor** — a lagging ring + dot, disabled automatically on
   touch devices.
-- **The orrery** — the hero centrepiece. An instrument dial (60 tick
-  marks and a slow brass sweep, both drawn as masked conic gradients)
-  around three orbital planes rendered in real 3D: each plane is tilted
-  in the same perspective as the core, so nodes genuinely pass behind
-  the sphere on the far half of every orbit. Pure CSS; the only script
-  is a few degrees of pointer lean. Holds still under
-  `prefers-reduced-motion`.
 - **Generative background** — a lightweight canvas particle field that
-  drifts and links nearby nodes, reacting subtly to the mouse.
+  drifts and links nearby nodes, reacting subtly to the mouse, under a
+  whisper of animated film grain.
 - **laila.ai** — a floating command palette (press `Ctrl`/`Cmd + K`, click
   the orb bottom-right, or the "ask laila.ai" nav button). It's a
   rule-based keyword matcher, not a real model call — see
@@ -107,7 +133,7 @@ stays low, the accent appears in small doses (kickers, links, rules,
 dots), and **gradients only ever move within one family** — a tonal
 shift, never a rainbow. There are four, split by how much contrast
 whatever sits on top needs: `--grad` (headings), `--grad-cta` (buttons
-and chat bubbles), `--grad-orb` (the hero sphere), `--grad-vivid`
+and chat bubbles), `--grad-orb` (lit spheres), `--grad-vivid`
 (decoration with no text on it).
 
 Light mode = bone paper, navy ink. Dark mode inverts it. Components never
@@ -119,17 +145,31 @@ and the Konami confetti, which read the same tokens from JS.
 ## Structure
 
 ```
-index.html            markup
-css/style.css         all styling (light default, dark via [data-theme], RTL via [dir])
+index.html            markup — one <section data-scene> per scene
+css/style.css         base styling: tokens, nav, buttons, dialogs (light default,
+                      dark via [data-theme], RTL via [dir]); vault.html uses it too
+css/cinema.css        the scenes, the poster and the HUD — static layout by
+                      default, layered/pinned under html.cine
 js/data.js            your content — edit this
 js/data.ar.js         the Arabic overlay on top of it
 js/i18n.js            language engine + the UI string dictionary
 js/particles.js       background canvas animation
 js/ai-assistant.js    the assistant's "brain" (bilingual keyword intents)
+js/poster.js          scene 00, the waving poster — every glyph drawn in code
+js/cinema.js          scenes 01–07: the GSAP ScrollTrigger timelines + the HUD
 js/app.js             rendering + all interactions
+js/vendor/            GSAP 3.15 + ScrollTrigger, vendored (see below)
+assets/               résumé, project videos, the newspaper clipping
 ```
 
-Load order matters: `data.js` → `data.ar.js` → `i18n.js` → the rest, and
-`I18N.init()` runs before any rendering.
+Load order matters: GSAP → `data.js` → `data.ar.js` → `i18n.js` → the
+rest, and `I18N.init()` runs before any rendering. `cinema.js` must load
+before `app.js`, which calls `Poster.mount()` and then `Cinema.init()`
+once the content is rendered.
 
-No dependencies, no npm install, no build step — just open the file.
+No npm install, no build step — just open the file. The one library,
+GSAP (free under its [standard license](https://gsap.com/standard-license)),
+is vendored in `js/vendor/` rather than pulled from a CDN, so the site
+still works offline and from `file://`. To update it, replace the two
+files with the ones from a newer `gsap` package's `dist/` folder and bump
+their `?v=`.

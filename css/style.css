@@ -142,7 +142,6 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -175,13 +174,6 @@ kbd { font-family: var(--font-mono); background: var(--surface); border: 1px sol
 
 /* ---------- layout helpers ---------- */
 .section { max-width: 1080px; margin: 0 auto; padding: 140px 32px 40px; position: relative; }
-.section-kicker {
-  font-family: var(--font-mono);
-  color: var(--accent-1);
-  letter-spacing: .08em;
-  font-size: .85rem;
-  margin: 0 0 12px;
-}
 .section-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 40px; font-weight: 600; }
 
 /* ---------- buttons ---------- */
@@ -288,206 +280,11 @@ body.no-custom-cursor .cursor-dot, body.no-custom-cursor .cursor-ring { display:
 .nav-actions { display: flex; align-items: center; gap: 10px; }
 @media (max-width: 760px) { .nav-links { display: none; } }
 
-/* ---------- hero ---------- */
-.hero {
-  min-height: 100vh; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 40px;
-  max-width: 1180px; margin: 0 auto; padding: 130px 32px 60px;
-}
-.eyebrow { font-family: var(--font-mono); color: var(--accent-1); font-size: .9rem; margin: 0 0 14px; }
-.hero h1 { font-size: clamp(2.4rem, 5.4vw, 4rem); line-height: 1.1; margin: 0 0 22px; font-weight: 700; }
-.typed-role { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.caret { color: var(--accent-2); animation: blink 1s step-end infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.hero-sub { color: var(--ink-soft); font-size: 1.08rem; max-width: 46ch; margin: 0 0 30px; }
-.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
-.hero-tags { display: flex; gap: 10px; flex-wrap: wrap; font-family: var(--font-mono); font-size: .78rem; color: var(--ink-faint); }
-.hero-tags span { background: var(--surface); border: 1px solid var(--border); padding: 5px 10px; border-radius: 999px; }
-
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* =========================================================
-   THE ORRERY — hero centrepiece
-   An instrument dial (ticks + a slow brass sweep) around three
-   orbital planes rendered in real 3D: every plane is tilted in
-   the same perspective as the core, so the nodes genuinely pass
-   behind it on the far half of each orbit. No canvas, no
-   library — transforms and two masked conic gradients.
-   ========================================================= */
-.hero-visual { position: relative; height: 420px; display: grid; place-items: center; }
-
-.orrery {
-  --orrery: clamp(272px, 31vw, 384px);
-  position: relative; width: var(--orrery); height: var(--orrery);
-  perspective: 900px;
-}
-
-/* ---- the dial: fixed instrument ring around the orbits ---- */
-.dial { position: absolute; inset: 0; pointer-events: none; }
-.dial > * { position: absolute; inset: 0; border-radius: 50%; }
-
-/* 60 minor ticks + 12 major ones, drawn as repeating conic gradients and
-   masked down to a narrow band at the rim — cheaper than 72 elements. */
-.dial-ticks {
-  background: repeating-conic-gradient(from 0deg,
-    rgba(var(--navy-rgb), .30) 0deg .35deg, transparent .35deg 6deg);
-  -webkit-mask: radial-gradient(closest-side, transparent 0 94%, #000 94.5% 100%);
-          mask: radial-gradient(closest-side, transparent 0 94%, #000 94.5% 100%);
-}
-.dial-ticks-major {
-  background: repeating-conic-gradient(from 0deg,
-    rgba(var(--navy-rgb), .45) 0deg .6deg, transparent .6deg 30deg);
-  -webkit-mask: radial-gradient(closest-side, transparent 0 88%, #000 88.5% 100%);
-          mask: radial-gradient(closest-side, transparent 0 88%, #000 88.5% 100%);
-  animation: spin 150s linear infinite;
-}
-:root[data-theme="dark"] .dial-ticks { background: repeating-conic-gradient(from 0deg, rgba(var(--bone-rgb), .26) 0deg .35deg, transparent .35deg 6deg); }
-:root[data-theme="dark"] .dial-ticks-major { background: repeating-conic-gradient(from 0deg, rgba(var(--bone-rgb), .38) 0deg .6deg, transparent .6deg 30deg); }
-
-.dial-edge { border: 1px solid var(--border); }
-
-/* the sweep — one brass arc, once round every 11s */
-.dial-sweep {
-  background: conic-gradient(from 0deg,
-    rgba(var(--brass-rgb), 0) 0deg,
-    rgba(var(--brass-rgb), .50) 52deg,
-    rgba(var(--brass-rgb), 0) 68deg,
-    transparent 68deg 360deg);
-  -webkit-mask: radial-gradient(closest-side, transparent 0 91%, #000 92% 100%);
-          mask: radial-gradient(closest-side, transparent 0 91%, #000 92% 100%);
-  animation: spin 11s linear infinite;
-}
-
-/* ---- the 3D stage ---- */
-.orrery-stage {
-  position: absolute; inset: 0;
-  transform-style: preserve-3d;
-  /* --tx / --ty are nudged by the pointer (see initOrrery in app.js) */
-  transform: rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg));
-  transition: transform .9s cubic-bezier(.2, .8, .2, 1);
-  /* no will-change here on purpose: promoting this subtree to its own
-     composited layer makes the core's soft shadow rasterise against a
-     square layer bound, which shows as a faint box behind the sphere */
-}
-
-.plane { position: absolute; inset: 0; transform-style: preserve-3d; }
-/* deliberately stronger than --border: at this tilt an orbit collapses to a
-   hairline, and it has to stay legible as structure */
-.plane-ring {
-  position: absolute; inset: 0; border-radius: 50%;
-  border: 1px dashed rgba(var(--navy-rgb), .30);
-}
-:root[data-theme="dark"] .plane-ring { border-color: rgba(var(--bone-rgb), .28); }
-.plane-spin {
-  position: absolute; inset: 0; transform-style: preserve-3d;
-  animation: spin var(--dur, 20s) linear infinite;
-}
-
-/* Each plane is tilted differently, and each node is counter-tilted by the
-   same amount so it stays a round dot facing the viewer. */
-.plane-1 { transform: rotateX(72deg) rotateZ(-14deg); }
-.plane-1 .plane-spin { --dur: 27s; }
-.plane-1 .node { transform: rotateX(-72deg); }
-
-.plane-2 { inset: 9%; transform: rotateX(56deg) rotateZ(38deg); }
-.plane-2 .plane-ring { border-style: solid; }
-.plane-2 .plane-spin { --dur: 18s; animation-direction: reverse; }
-.plane-2 .node { transform: rotateX(-56deg); }
-
-.plane-3 { inset: 20%; transform: rotateX(79deg) rotateZ(-48deg); }
-.plane-3 .plane-spin { --dur: 12s; }
-.plane-3 .node { transform: rotateX(-79deg); }
-
-.node {
-  position: absolute; top: 50%; left: 100%;
-  width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px;
-  border-radius: 50%; background: var(--accent-3);
-  box-shadow: 0 0 12px 1px rgba(var(--brass-rgb), .55);
-}
-.node-lg { width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px; }
-.node-far { left: 0; }                 /* the far side of the same orbit */
-
-.node-wing {
-  width: 26px; height: 26px; margin: -13px 0 0 -13px;
-  background: none; box-shadow: none; color: var(--accent-3);
-}
-.node-wing svg { width: 100%; height: 100%; fill: currentColor; animation: wingFlap 1.1s ease-in-out infinite alternate; }
-@keyframes wingFlap { from { transform: scaleX(1); } to { transform: scaleX(.6); } }
-
-/* ---- the core ---- */
-.core-shadow {
-  position: absolute; top: 50%; left: 50%;
-  /* wider than the core so the falloff is gradual rather than a hard rim */
-  width: 66%; height: 66%;
-  transform: translate(-50%, -46%);
-  border-radius: 50%; pointer-events: none;
-  background: radial-gradient(closest-side,
-    rgba(var(--navy-rgb), .20), rgba(var(--navy-rgb), .13) 58%, rgba(var(--navy-rgb), 0) 100%);
-}
-:root[data-theme="dark"] .core-shadow {
-  background: radial-gradient(closest-side,
-    rgba(0, 0, 0, .5), rgba(0, 0, 0, .3) 58%, rgba(0, 0, 0, 0) 100%);
-}
-
-.core {
-  position: absolute; top: 50%; left: 50%;
-  width: 38%; height: 38%;
-  border-radius: 50%;
-  background: var(--grad-orb);
-  /* insets only — the outer shadow lives on .core-shadow, see the note in
-     index.html */
-  box-shadow:
-    inset -10px -16px 36px rgba(var(--navy-rgb), .24),
-    inset 8px 10px 28px rgba(255, 255, 255, .20);
-  display: grid; place-items: center;
-  animation: coreBreathe 7s ease-in-out infinite;
-}
-@keyframes coreBreathe {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%      { transform: translate(-50%, -50%) scale(1.035); }
-}
-.core-mark {
-  font-family: var(--font-display); font-weight: 700; line-height: 1;
-  font-size: clamp(1.9rem, 4.4vw, 2.9rem); color: var(--on-grad);
-}
-.core-halo {
-  position: absolute; inset: 0; border-radius: 50%;
-  border: 1px solid rgba(var(--brass-rgb), .55);
-  animation: haloPulse 5s ease-out infinite;
-}
-.core-halo-2 { animation-delay: 2.5s; }
-@keyframes haloPulse {
-  0%   { transform: scale(1);    opacity: .5; }
-  70%  { opacity: 0; }
-  100% { transform: scale(1.8);  opacity: 0; }
-}
-
-.scroll-cue {
-  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background: none; border: none; color: var(--ink-faint); font-family: var(--font-mono); font-size: .75rem;
-  display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
-}
-.scroll-cue span { width: 1px; height: 26px; background: var(--grad-vivid); animation: scrollDown 1.8s ease-in-out infinite; }
-@keyframes scrollDown { 0% { transform: scaleY(0); transform-origin: top; opacity: 1; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; } }
-
-@media (max-width: 860px) {
-  .hero { grid-template-columns: 1fr; text-align: left; }
-  .hero-visual { height: 300px; order: -1; }
-  .orrery { --orrery: clamp(210px, 62vw, 290px); }
-}
 
 /* ---------- reveal on scroll ---------- */
 [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
 [data-reveal].in-view { opacity: 1; transform: translateY(0); }
-
-/* ---------- about ---------- */
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
-.about-lead { font-size: clamp(1.3rem, 2.6vw, 1.8rem); font-weight: 500; line-height: 1.45; }
-.about-lead em { font-style: normal; color: var(--accent-2); }
-.about-body p { color: var(--ink-soft); font-size: 1.02rem; }
-.about-facts { list-style: none; padding: 0; margin: 22px 0; display: flex; flex-direction: column; gap: 10px; font-size: .95rem; }
-.about-facts li { display: flex; gap: 10px; align-items: center; }
-@media (max-width: 800px) { .about-grid { grid-template-columns: 1fr; gap: 24px; } }
 
 /* ---------- skills ---------- */
 .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 40px; }
@@ -502,10 +299,6 @@ body.no-custom-cursor .cursor-dot, body.no-custom-cursor .cursor-ring { display:
 .skill-bar { height: 6px; border-radius: 4px; background: var(--bg-soft); overflow: hidden; }
 .skill-fill { height: 100%; border-radius: 4px; background: var(--grad-vivid); width: 0%; transition: width 1.2s cubic-bezier(.2,.8,.2,1); }
 
-.marquee { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 18px 0; }
-.marquee-track { display: flex; gap: 40px; width: max-content; animation: marquee 22s linear infinite; font-family: var(--font-mono); color: var(--ink-faint); white-space: nowrap; }
-.marquee-track span { font-size: .95rem; }
-@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ---------- project case-study popup ---------- */
 .pm-overlay {
@@ -610,66 +403,6 @@ body.pm-open #scroll-progress { display: none !important; }
   background: var(--grad-soft); border: 1px solid var(--border);
 }
 
-/* ---------- certifications ---------- */
-.certs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
-.cert-card {
-  display: flex; flex-direction: column; gap: 8px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px;
-  box-shadow: var(--shadow-sm);
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-}
-a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-1); }
-.cert-emoji { font-size: 1.6rem; line-height: 1; }
-.cert-title { font-size: 1rem; font-weight: 600; line-height: 1.35; margin: 0; }
-.cert-provider { margin: 0; font-size: .88rem; color: var(--ink-faint); }
-.cert-date { font-family: var(--font-mono); font-size: .75rem; color: var(--ink-faint); }
-.cert-link { margin-top: auto; padding-top: 8px; font-family: var(--font-mono); font-size: .8rem; color: var(--accent-1); }
-
-/* ---------- projects ---------- */
-.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
-.project-card {
-  position: relative; overflow: hidden; border-radius: var(--radius);
-  background: var(--surface); border: 1px solid var(--border); padding: 26px;
-  box-shadow: var(--shadow-sm); transition: transform .3s ease, box-shadow .3s ease;
-}
-.project-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
-.project-card::before {
-  content: ""; position: absolute; inset: 0; opacity: 0; background: var(--grad-soft); transition: opacity .3s ease;
-}
-.project-card:hover::before { opacity: 1; }
-/* a card with no case study and no link isn't clickable — drop the lift and
-   the wash so it doesn't pretend otherwise */
-.project-card.is-static { cursor: default; }
-.project-card.is-static:hover { transform: none; box-shadow: var(--shadow-sm); }
-.project-card.is-static:hover::before { opacity: 0; }
-
-.project-sticker {
-  position: absolute; top: 16px; inset-inline-end: 16px; z-index: 3;
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--surface); border: 1.5px solid var(--signal); color: var(--signal-ink);
-  font-family: var(--font-mono); font-weight: 700; font-size: .68rem; letter-spacing: .02em;
-  padding: 6px 12px; border-radius: 999px; transform: rotate(-4deg);
-  box-shadow: var(--shadow-sm); pointer-events: none;
-  /* the card clips its overflow, so a long badge has to wrap rather than run
-     off the edge — the reserved space keeps it clear of the emoji */
-  max-width: calc(100% - 78px); text-align: center; line-height: 1.35;
-}
-.sticker-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
-  box-shadow: 0 0 0 0 rgba(var(--signal-rgb),.6); animation: pulseSignal 1.8s infinite;
-}
-@keyframes pulseSignal {
-  0% { box-shadow: 0 0 0 0 rgba(var(--signal-rgb),.55); }
-  70% { box-shadow: 0 0 0 8px rgba(var(--signal-rgb),0); }
-  100% { box-shadow: 0 0 0 0 rgba(var(--signal-rgb),0); }
-}
-.project-emoji { font-size: 1.8rem; margin-bottom: 14px; display: inline-block; }
-.project-title { font-weight: 700; font-size: 1.15rem; margin: 0 0 8px; position: relative; }
-.project-desc { color: var(--ink-soft); font-size: .93rem; margin: 0 0 16px; position: relative; }
-.project-tags { display: flex; gap: 8px; flex-wrap: wrap; position: relative; }
-.project-tags span { font-family: var(--font-mono); font-size: .72rem; color: var(--on-soft); background: var(--bg-soft); padding: 3px 9px; border-radius: 999px; }
-.project-link { display: inline-flex; margin-top: 16px; font-size: .85rem; font-weight: 600; color: var(--accent-2); position: relative; }
-
 /* ---------- contact ---------- */
 .contact-section { text-align: center; }
 .contact-sub { color: var(--ink-soft); max-width: 50ch; margin: 0 auto 36px; }
@@ -683,30 +416,6 @@ a.cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); b
 
 /* ---------- footer ---------- */
 .footer { text-align: center; padding: 50px 20px 70px; color: var(--ink-faint); font-size: .85rem; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-
-/* ---------- boot screen ---------- */
-/* Always the dark half of the palette, whichever theme is active — the
-   boot window is meant to read as a terminal. */
-#boot-screen {
-  position: fixed; inset: 0; z-index: 1000; background: var(--navy-950);
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity .5s ease, visibility .5s ease;
-}
-#boot-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.boot-window {
-  width: min(640px, 90vw); background: var(--navy-900); border-radius: 12px; overflow: hidden;
-  border: 1px solid rgba(var(--bone-rgb),.10); box-shadow: 0 30px 80px rgba(0,0,0,.55);
-}
-.boot-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--navy-800); }
-.boot-dot { width: 10px; height: 10px; border-radius: 50%; }
-.boot-dot.r { background: var(--brass-600); } .boot-dot.y { background: var(--brass-400); } .boot-dot.g { background: var(--sage-300); }
-.boot-title { margin-inline-start: 10px; font-family: var(--font-mono); font-size: .78rem; color: var(--navy-400); }
-.boot-log {
-  margin: 0; padding: 22px 20px 26px; min-height: 220px; font-family: var(--font-mono); font-size: .88rem;
-  color: var(--bone-300); white-space: pre-wrap; line-height: 1.7;
-}
-.boot-log .ok { color: var(--sage-300); }
-.boot-hint { text-align: center; padding-bottom: 16px; font-family: var(--font-mono); font-size: .72rem; color: var(--navy-500); }
 
 /* ---------- AI orb + palette ---------- */
 .ai-orb {
@@ -831,7 +540,6 @@ body.portal-open #portal-overlay { clip-path: circle(150% at 50% 50%); }
 /* Arabic letterforms sit on a smaller x-height relative to their ascenders,
    so the same line-height reads cramped — give the running text more room. */
 :root[dir="rtl"] body { line-height: 1.65; }
-:root[dir="rtl"] .hero h1 { line-height: 1.35; }
 :root[dir="rtl"] .pm-block p,
 :root[dir="rtl"] .pm-highlights span { line-height: 1.85; }
 
@@ -841,21 +549,12 @@ body.portal-open #portal-overlay { clip-path: circle(150% at 50% 50%); }
    is exactly the kind of thing that makes a translated page look machine-made. */
 :root[dir="rtl"] .pm-chips span,
 :root[dir="rtl"] .pm-stat b,
-:root[dir="rtl"] .marquee-track span,
 :root[dir="rtl"] .skill-pct,
 :root[dir="rtl"] .cert-date { direction: ltr; }
 /* …but these are centred or right-aligned boxes, so re-anchor the text
    after forcing its direction */
 :root[dir="rtl"] .pm-stat b { text-align: center; }
 :root[dir="rtl"] .pm-chips span { text-align: start; }
-
-/* translateX is physical, so the marquee would scroll against the reading
-   direction. In Arabic items leave to the right and arrive from the left. */
-:root[dir="rtl"] .marquee-track { animation-name: marqueeRtl; }
-@keyframes marqueeRtl { from { transform: translateX(0); } to { transform: translateX(50%); } }
-
-/* the "live · in use" sticker leans away from the corner it sits in */
-:root[dir="rtl"] .project-sticker { transform: rotate(4deg); }
 
 /* the butterflies drift with the reading direction: right-to-left in Arabic */
 :root[dir="rtl"] .butterfly { left: auto; right: -8%; animation-name: butterflyDriftRtl; }
