@@ -200,7 +200,6 @@ const siteData = {
     {
       emoji: "🏥",
       title: "Aisha Yateem Family Counselling Centre: Case Management System",
-      short: "Aisha Yateem Centre", // for tight spots, like the phone in scene 01
       description: "A full-stack platform for a clinic's social & family counseling services: patient intakes, case logs, appointments, staff messaging, and multilingual PDF/Word/Excel exports.",
       tags: ["React", "Node.js", "SQLite", "Full-Stack"],
       badge: "Live · in use",

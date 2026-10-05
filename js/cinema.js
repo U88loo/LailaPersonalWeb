@@ -8,14 +8,13 @@
    length, and Arabic runs the other way).
 
      00  opening titles   the poster drifts back as you leave it
-     01  the premise      pinned: titles → card → phone → CTA
+     01  the person       the bio lights up word by word
      02  the headline     pinned: the newspaper spins in, the
                           camera pushes in, subtitles translate
-     03  the person       the bio lights up word by word
-     04  the work         pinned: a film strip that runs sideways
-     05  the toolkit      two marquee rows, scrubbed by scroll
-     06  the credentials  tickets dealt onto the table
-     07  the end?         credits
+     03  the work         pinned: a film strip that runs sideways
+     04  the toolkit      two marquee rows, scrubbed by scroll
+     05  the credentials  tickets dealt onto the table
+     06  the end?         credits
 
    Motion is opt-in: html.cine is only added when GSAP loaded
    and the visitor hasn't asked for reduced motion. Without it
@@ -60,103 +59,16 @@ const Cinema = (function () {
     });
   }
 
-  /* ---------------- 01 · the premise ----------------
-     A port of the cinematic landing hero: the titles blur back, a deep
-     card rises and fills the screen, the phone flies in with the numbers,
-     then the card pulls back and leaves to reveal the call to action. */
-  function premise(isMobile) {
-    const sec = document.getElementById("premise");
-    const q = gsap.utils.selector(sec);
-    const card = q(".ch-card")[0];
-    const counter = q(".ch-counter")[0];
-    const target = Number(counter.getAttribute("data-count")) || 0;
-    const dir = rtl() ? -1 : 1;
-    const hiddenClip = rtl() ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)";
-
-    // the titles arrive once, as the scene scrolls into view
-    gsap.set(q(".ch-titles .scene-kicker, .ch-line-1"), { autoAlpha: 0, y: 60, scale: 0.85, filter: "blur(20px)", rotationX: -20 });
-    gsap.set(q(".ch-line-2"), { clipPath: hiddenClip });
-    gsap.timeline({ scrollTrigger: { trigger: sec, start: "top 70%", toggleActions: "play none none reverse" } })
-      .to(q(".ch-titles .scene-kicker, .ch-line-1"), { duration: 1.8, autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", rotationX: 0, ease: "expo.out", stagger: 0.08 })
-      .to(q(".ch-line-2"), { duration: 1.4, clipPath: "inset(0 0% 0 0%)", ease: "power4.inOut" }, "-=1.0");
-
-    gsap.set(q(".ch-copy, .ch-brand, .ch-mockup, .ch-badge, .ch-widget"), { autoAlpha: 0 });
-    gsap.set(q(".ch-cta"), { autoAlpha: 0, scale: 0.8, filter: "blur(30px)" });
-    gsap.set(q(".ch-ring-progress"), { strokeDashoffset: 377 });
-    counter.textContent = "0";
-    const count = { v: 0 };
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sec,
-        start: "top top",
-        end: () => "+=" + (isMobile ? 3400 : 4400),
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        // dim the nav while the card fills the screen
-        onUpdate: (self) => {
-          const a = self.animation;
-          const t = self.progress * a.duration();
-          lights("premise", t >= a.labels.full - 0.6 && t < a.labels.pullback + 0.4);
-        },
-        onToggle: (self) => { if (!self.isActive) lights("premise", false); }
-      }
+  /* ---------------- 01 · the person ----------------
+     Each word of the bio brightens as the paragraph scrolls through —
+     read at the pace you scroll, like subtitles. */
+  function about() {
+    const words = document.querySelectorAll("#about-text .w");
+    if (!words.length) return;
+    gsap.to(words, {
+      opacity: 1, ease: "none", stagger: 0.1,
+      scrollTrigger: { trigger: "#about-text", start: "top 85%", end: "bottom 40%", scrub: true }
     });
-
-    tl.to([q(".ch-titles"), q(".ch-grid")], { scale: 1.15, filter: "blur(20px)", opacity: 0.2, ease: "power2.inOut", duration: 2 }, 0)
-      .fromTo(card, { y: () => window.innerHeight + 200 }, { y: 0, ease: "power3.inOut", duration: 2 }, 0)
-      .to(card, { width: "100%", height: "100%", borderRadius: 0, ease: "power3.inOut", duration: 1.5 })
-      .addLabel("full")
-      .fromTo(q(".ch-mockup"),
-        { y: 300, z: -500, rotationX: 50, rotationY: -30 * dir, autoAlpha: 0, scale: 0.6 },
-        { y: 0, z: 0, rotationX: 0, rotationY: 0, autoAlpha: 1, scale: 1, ease: "expo.out", duration: 2.5 }, "-=0.8")
-      .fromTo(q(".ch-widget"), { y: 40, autoAlpha: 0, scale: 0.95 }, { y: 0, autoAlpha: 1, scale: 1, stagger: 0.15, ease: "back.out(1.2)", duration: 1.5 }, "-=1.5")
-      .to(q(".ch-ring-progress"), { strokeDashoffset: 57, duration: 2, ease: "power3.inOut" }, "-=1.2")
-      .to(count, { v: target, duration: 2, ease: "expo.out", onUpdate: () => { counter.textContent = Math.round(count.v); } }, "-=2.0")
-      .fromTo(q(".ch-badge"), { y: 100, autoAlpha: 0, scale: 0.7, rotationZ: -10 }, { y: 0, autoAlpha: 1, scale: 1, rotationZ: 0, ease: "back.out(1.5)", duration: 1.5, stagger: 0.2 }, "-=2.0")
-      .fromTo(q(".ch-copy"), { x: -50 * dir, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power4.out", duration: 1.5 }, "-=1.5")
-      .fromTo(q(".ch-brand"), { x: 50 * dir, autoAlpha: 0, scale: 0.8 }, { x: 0, autoAlpha: 1, scale: 1, ease: "expo.out", duration: 1.5 }, "<")
-      .to({}, { duration: 2.5 })
-      .set(q(".ch-titles"), { autoAlpha: 0 })
-      .set(q(".ch-cta"), { autoAlpha: 1 })
-      .to({}, { duration: 1.5 })
-      .to([q(".ch-mockup"), q(".ch-copy"), q(".ch-brand")], { scale: 0.9, y: -40, z: -200, autoAlpha: 0, ease: "power3.in", duration: 1.2, stagger: 0.05 })
-      .to(card, {
-        width: isMobile ? "92vw" : "85vw",
-        height: isMobile ? "94%" : "88%",   // of the layer below the nav
-        borderRadius: isMobile ? 32 : 40,
-        ease: "expo.inOut", duration: 1.8
-      }, "pullback")
-      .to(q(".ch-cta"), { scale: 1, filter: "blur(0px)", ease: "expo.inOut", duration: 1.8 }, "pullback")
-      .to(card, { y: () => -window.innerHeight - 300, ease: "power3.in", duration: 1.5 })
-      .to({}, { duration: 0.8 });   // a beat on the call to action before it scrolls on
-
-    return premisePointer(sec, card, q(".ch-phone")[0]);
-  }
-
-  // the card's sheen follows the pointer, and the phone leans toward it
-  function premisePointer(sec, card, phone) {
-    if (!window.matchMedia("(pointer: fine)").matches) return null;
-    let raf = 0;
-    const onMove = (e) => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const r = card.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > window.innerHeight) return;
-        card.style.setProperty("--mouse-x", e.clientX - r.left + "px");
-        card.style.setProperty("--mouse-y", e.clientY - r.top + "px");
-        const xv = (e.clientX / window.innerWidth - 0.5) * 2;
-        const yv = (e.clientY / window.innerHeight - 0.5) * 2;
-        gsap.to(phone, { rotationY: xv * 12, rotationX: -yv * 12, ease: "power3.out", duration: 1.2, overwrite: "auto" });
-      });
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(raf);
-    };
   }
 
   /* ---------------- 02 · the headline ----------------
@@ -201,7 +113,8 @@ const Cinema = (function () {
     }, extra);
 
     gsap.set(paper, { xPercent: -50, yPercent: -50, transformOrigin: "50% 50%", force3D: false });
-    gsap.set(stamp, { xPercent: -50, yPercent: -50, rotation: -11, scale: 2.4, autoAlpha: 0 });
+    // left-anchored, like the CSS: only centred vertically
+    gsap.set(stamp, { xPercent: 0, yPercent: -50, rotation: -11, scale: 2.4, autoAlpha: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -244,19 +157,7 @@ const Cinema = (function () {
     return null;
   }
 
-  /* ---------------- 03 · the person ----------------
-     Each word of the bio brightens as the paragraph scrolls through —
-     read at the pace you scroll, like subtitles. */
-  function about() {
-    const words = document.querySelectorAll("#about-text .w");
-    if (!words.length) return;
-    gsap.to(words, {
-      opacity: 1, ease: "none", stagger: 0.1,
-      scrollTrigger: { trigger: "#about-text", start: "top 85%", end: "bottom 40%", scrub: true }
-    });
-  }
-
-  /* ---------------- 04 · the work ----------------
+  /* ---------------- 03 · the work ----------------
      On wide screens the projects become frames on a film strip, pinned
      and pulled sideways by the scroll. Narrow screens keep the grid. */
   function work(wide) {
@@ -301,14 +202,14 @@ const Cinema = (function () {
     return () => sec.classList.remove("is-strip");
   }
 
-  /* ---------------- 05 · the toolkit ---------------- */
+  /* ---------------- 04 · the toolkit ---------------- */
   function skills() {
     const trigger = { trigger: ".marquee", start: "top bottom", end: "bottom top", scrub: 0.6 };
     gsap.fromTo("#marquee-track", { xPercent: 0 }, { xPercent: -16, ease: "none", scrollTrigger: trigger });
     gsap.fromTo("#marquee-track-2", { xPercent: -16 }, { xPercent: 0, ease: "none", scrollTrigger: Object.assign({}, trigger) });
   }
 
-  /* ---------------- 06 · the credentials ----------------
+  /* ---------------- 05 · the credentials ----------------
      Tickets are dealt onto the table, alternately tilted. */
   function certs() {
     const tickets = gsap.utils.toArray(".ticket");
@@ -323,7 +224,7 @@ const Cinema = (function () {
     });
   }
 
-  /* ---------------- 07 · the credits roll ---------------- */
+  /* ---------------- 06 · the credits roll ---------------- */
   function credits() {
     gsap.from("#credits-roll > div", {
       y: 30, autoAlpha: 0, stagger: 0.12, duration: 0.8, ease: "power3.out",
@@ -337,9 +238,8 @@ const Cinema = (function () {
       const { isMobile, wide } = ctx.conditions;
       const cleanups = [];
       openingOut();
-      cleanups.push(premise(isMobile));
-      cleanups.push(press(isMobile));
       about();
+      cleanups.push(press(isMobile));
       cleanups.push(work(wide));
       skills();
       certs();

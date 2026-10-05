@@ -18,7 +18,7 @@
   /* The palette lives in css/style.css — read it from the accent tokens so
      the field re-tints itself whenever the theme (or the palette) changes. */
   let COLORS = [];
-  let linkColor = "#13232f";
+  let linkColor = "#3a1e2c";
 
   function readPalette() {
     const css = getComputedStyle(document.documentElement);
@@ -26,12 +26,12 @@
       (css.getPropertyValue(name) || "").trim() || fallback;
 
     COLORS = [
-      token("--accent-1", "#8a6526"),
-      token("--accent-2", "#3e5c76"),
-      token("--accent-3", "#a77b36"),
-      token("--accent-4", "#7d97ac")
+      token("--accent-1", "#ad3d66"),
+      token("--accent-2", "#74515f"),
+      token("--accent-3", "#e3829e"),
+      token("--accent-4", "#f2adc0")
     ];
-    linkColor = isDark() ? token("--accent-4", "#7d97ac") : token("--navy-900", "#13232f");
+    linkColor = isDark() ? token("--accent-4", "#f2adc0") : token("--plum-900", "#3a1e2c");
     if (particles) particles.forEach((p, i) => { p.color = COLORS[i % COLORS.length]; });
   }
 

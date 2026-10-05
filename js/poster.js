@@ -272,42 +272,6 @@ const Poster = (function () {
       `</button>`;
   }
 
-  function signatureMarkup(lines) {
-    const H = 26, S = 3.6, G = 4;
-    const rows = lines.map((line) => {
-      const chars = [...line.replace(/[^A-Z ]/g, "")];
-      let x = 0;
-      const items = chars.map((ch) => {
-        const w = glyphWidth(ch, 15, S);
-        const it = { ch, x, w };
-        x += w + G;
-        return it;
-      });
-      return { items, width: Math.max(0, x - G) };
-    });
-    const widest = Math.max(1, ...rows.map((r) => r.width));
-    const k = Math.min(1, 80 / widest);
-    const ys = rows.length > 1 ? [30, 66] : [48];
-    let n = 0;
-    let s = `<svg viewBox="-10 -18 140 140" aria-hidden="true">` +
-      `<path class="wpl-draw wpl-ink-acc" pathLength="1" d="M 60 8 C 96 6 116 30 114 62 C 112 96 88 114 58 112 C 26 110 6 88 8 58 C 10 28 30 10 66 12" fill="none" stroke-width="4" stroke-linecap="round" style="animation-delay:3s"/>`;
-    rows.forEach((row, ri) => {
-      s += `<g transform="translate(${num(60 - (row.width * k) / 2)} ${num(ys[ri] - (H * k) / 2)}) scale(${num(k * 100) / 100})">`;
-      row.items.forEach((it) => {
-        const j = n++;
-        const rot = (hash(j * 7 + 3) - 0.5) * 16;
-        const dy = (hash(j * 11 + 5) - 0.5) * 5;
-        s += `<path class="wpl-draw wpl-ink-acc" pathLength="1" transform="translate(${num(it.x)} ${num(dy)}) rotate(${num(rot)} ${num(it.w / 2)} ${H / 2})" ` +
-          `d="${glyphPath(it.ch, it.w, H, S)}" fill="none" stroke-width="${S}" stroke-linecap="round" stroke-linejoin="round" style="animation-delay:${num(3.2 + j * 0.07)}s"/>`;
-      });
-      s += `</g>`;
-    });
-    ["M 110 2 L 118 -8", "M 118 16 L 130 11", "M 100 -2 L 101 -14"].forEach((d, i) => {
-      s += `<path class="wpl-draw wpl-ink-acc" pathLength="1" d="${d}" stroke-width="4" stroke-linecap="round" style="animation-delay:${num(3.8 + i * 0.08)}s"/>`;
-    });
-    return s + `</svg>`;
-  }
-
   function stormMarkup() {
     const letters = letterPool();
     const pool = letters + letters + AZ;
@@ -441,11 +405,6 @@ const Poster = (function () {
       `</g>`;
   }
 
-  function signatureLines() {
-    const sig = I18N.t("poster.signature");
-    return sig.toUpperCase().split("/").slice(0, 2);
-  }
-
   function stageMarkup(intro) {
     const k = L.charScale;
     const charLeft = L.charX - 205 * k;
@@ -473,8 +432,7 @@ const Poster = (function () {
         `<g class="wpl-bubble-slot"></g>` +
       `</svg>` +
       (intro ? stormMarkup() : "") +
-      cornerMarkup(0) + cornerMarkup(1) +
-      `<button type="button" class="wpl-sign" aria-label="${escAttr(I18N.t(intro || opts.intro ? "poster.replay" : "poster.waveAgain"))}">${signatureMarkup(signatureLines())}</button>`
+      cornerMarkup(0) + cornerMarkup(1)
     );
   }
 
@@ -709,7 +667,6 @@ const Poster = (function () {
     root.addEventListener("click", (e) => {
       const die = e.target.closest("[data-die]");
       if (die) return rollDie(Number(die.getAttribute("data-die")));
-      if (e.target.closest(".wpl-sign")) return replay();
       if (e.target.closest(".wpl-char")) return wave();
     });
 

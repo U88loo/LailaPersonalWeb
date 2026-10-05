@@ -18,8 +18,8 @@
      Arabic is loaded alongside them and takes over under [dir="rtl"]. It's
      loaded in both languages because the ع on the language toggle needs it. -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=19">
-<link rel="stylesheet" href="css/cinema.css?v=1">
+<link rel="stylesheet" href="css/style.css?v=23">
+<link rel="stylesheet" href="css/cinema.css?v=8">
 <!-- Set lang/dir and theme before first paint — otherwise an Arabic visitor
      gets a visible LTR→RTL flip, and a dark-mode visitor a white flash. -->
 <script>
@@ -100,93 +100,22 @@
     <div id="poster" class="poster"></div>
   </section>
 
-  <!-- SCENE 01 · THE PREMISE
-       A pinned, scrubbed sequence (js/cinema.js): the titles blur back, a deep
-       navy card rises and fills the screen, a phone flies in with the numbers,
-       then the card pulls back and flies off to reveal the call to action.
-       Without motion it's simply the three blocks stacked. -->
-  <section id="premise" class="scene cine-hero" data-scene="1">
-    <div class="ch-grid" aria-hidden="true"></div>
-
-    <div class="ch-titles">
-      <p class="scene-kicker" data-i18n="kicker.premise">scene 01 · the premise</p>
-      <h2 class="ch-title">
-        <span class="ch-line ch-line-1" data-i18n="cine.line1">Every system has a story.</span>
-        <span class="ch-line ch-line-2" data-i18n="cine.line2">This one is mine.</span>
-      </h2>
-    </div>
-
-    <div class="ch-cta">
-      <h3 class="ch-cta-title" data-i18n="cine.ctaTitle">Roll the tape.</h3>
-      <p class="ch-cta-desc" data-i18n="cine.ctaDesc">A front-page headline, four shipped systems, and the person behind them. Keep scrolling.</p>
-      <div class="ch-cta-btns">
-        <a id="cta-resume" href="assets/LailaHajiResume.pdf" target="_blank" rel="noopener" class="btn-modern-light">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 2v6h6M12 12v6m-3-3 3 3 3-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span><small data-i18n="cine.resumeSmall">download the</small><b data-i18n="cine.resume">Résumé</b></span>
-        </a>
-        <button type="button" class="btn-modern-dark" data-open-ai>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor"/></svg>
-          <span><small data-i18n="cine.askSmall">ask the assistant</small><b>laila.ai</b></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="ch-card-layer">
-      <div class="ch-card" id="ch-card">
-        <div class="ch-sheen" aria-hidden="true"></div>
-        <div class="ch-card-grid">
-
-          <div class="ch-brand"><span class="ch-brand-text" data-i18n="cine.brand">LAILA</span></div>
-
-          <div class="ch-mockup">
-            <div class="ch-mockup-scale">
-              <div class="ch-phone" id="ch-phone" aria-hidden="true">
-                <i class="ch-hw" style="top:120px;height:25px"></i>
-                <i class="ch-hw" style="top:160px;height:45px"></i>
-                <i class="ch-hw" style="top:220px;height:45px"></i>
-                <i class="ch-hw ch-hw-r" style="top:170px;height:70px"></i>
-                <div class="ch-screen">
-                  <div class="ch-glare"></div>
-                  <div class="ch-island"><span></span></div>
-                  <div class="ch-app">
-                    <div class="ch-widget ch-app-head">
-                      <div><span class="ch-eyebrow">laila.OS</span><span class="ch-app-title" data-i18n="cine.appTitle">Portfolio</span></div>
-                      <span class="ch-avatar">LH</span>
-                    </div>
-                    <div class="ch-widget ch-ring">
-                      <svg viewBox="0 0 150 150">
-                        <circle cx="75" cy="75" r="60" class="ch-ring-track"/>
-                        <circle cx="75" cy="75" r="60" class="ch-ring-progress"/>
-                      </svg>
-                      <div class="ch-ring-label">
-                        <span class="ch-counter" data-count="74">74</span>
-                        <span class="ch-metric" data-i18n="cine.metric">K lines shipped</span>
-                      </div>
-                    </div>
-                    <ul class="ch-rows" id="ch-rows"></ul>
-                    <span class="ch-homebar"></span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="ch-badge ch-badge-1">
-                <span class="ch-badge-icon">📰</span>
-                <span><b data-i18n="cine.badge1">In the news</b><small data-i18n="cine.badge1sub">Akhbar Al Khaleej · Sep 2026</small></span>
-              </div>
-              <div class="ch-badge ch-badge-2">
-                <span class="ch-badge-icon">🎓</span>
-                <span><b data-i18n="cine.badge2">Graduated</b><small data-i18n="cine.badge2sub">B.Sc. Software Eng. · UoB</small></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="ch-copy">
-            <h3 class="ch-copy-title" data-i18n="cine.heading">Software that ships to real people.</h3>
-            <p class="ch-copy-desc" data-i18n-html="cine.desc">I'm <b>Laila</b>, a software engineering graduate from the University of Bahrain. I've built systems for a counselling clinic, a car-accessories shop and a herbs brand, and two of them are used every single day.</p>
-          </div>
-
-        </div>
-      </div>
+  <!-- SCENE 01 · THE PERSON -->
+  <section id="about" class="scene section about" data-scene="1">
+    <p class="scene-kicker" data-reveal data-i18n="kicker.about">scene 01 · the person</p>
+    <h2 class="about-lead" data-reveal data-i18n-html="about.lead">
+      I like software that feels a little <em>alive</em>: interfaces with
+      personality, details you notice on the second visit, and code that's
+      honest about what it's doing.
+    </h2>
+    <p id="about-text" class="about-reel"></p>
+    <div class="about-foot" data-reveal>
+      <ul class="about-facts">
+        <li><span>📍</span> <span id="about-location">Somewhere, Earth</span></li>
+        <li><span>🎓</span> <span id="about-focus">Building things that think a little</span></li>
+        <li><span>🧪</span> <span id="about-status">Currently building</span></li>
+      </ul>
+      <a id="resume-link" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm" data-i18n="about.resume">download résumé ↓</a>
     </div>
   </section>
 
@@ -219,31 +148,12 @@
     </div>
   </section>
 
-  <!-- SCENE 03 · THE PERSON -->
-  <section id="about" class="scene section about" data-scene="3">
-    <p class="scene-kicker" data-reveal data-i18n="kicker.about">scene 03 · the person</p>
-    <h2 class="about-lead" data-reveal data-i18n-html="about.lead">
-      I like software that feels a little <em>alive</em>: interfaces with
-      personality, details you notice on the second visit, and code that's
-      honest about what it's doing.
-    </h2>
-    <p id="about-text" class="about-reel"></p>
-    <div class="about-foot" data-reveal>
-      <ul class="about-facts">
-        <li><span>📍</span> <span id="about-location">Somewhere, Earth</span></li>
-        <li><span>🎓</span> <span id="about-focus">Building things that think a little</span></li>
-        <li><span>🧪</span> <span id="about-status">Currently building</span></li>
-      </ul>
-      <a id="resume-link" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm" data-i18n="about.resume">download résumé ↓</a>
-    </div>
-  </section>
-
-  <!-- SCENE 04 · THE WORK
+  <!-- SCENE 03 · THE WORK
        A film strip: pinned, and scrolled sideways on wide screens. -->
-  <section id="work" class="scene work" data-scene="4">
+  <section id="work" class="scene work" data-scene="3">
     <div class="work-pin">
       <header class="work-head section">
-        <p class="scene-kicker" data-i18n="kicker.work">scene 04 · the work</p>
+        <p class="scene-kicker" data-i18n="kicker.work">scene 03 · the work</p>
         <h2 class="section-title" data-i18n="title.work">Things I've shipped</h2>
         <p class="work-hint" data-i18n="work.hint">keep scrolling, the reel moves sideways</p>
       </header>
@@ -253,10 +163,10 @@
     </div>
   </section>
 
-  <!-- SCENE 05 · THE TOOLKIT -->
-  <section id="skills" class="scene skills" data-scene="5">
+  <!-- SCENE 04 · THE TOOLKIT -->
+  <section id="skills" class="scene skills" data-scene="4">
     <div class="section">
-      <p class="scene-kicker" data-reveal data-i18n="kicker.skills">scene 05 · the toolkit</p>
+      <p class="scene-kicker" data-reveal data-i18n="kicker.skills">scene 04 · the toolkit</p>
       <h2 class="section-title" data-reveal data-i18n="title.skills">Tools I reach for</h2>
       <div id="skills-grid" class="skills-grid" data-reveal></div>
     </div>
@@ -266,16 +176,16 @@
     </div>
   </section>
 
-  <!-- SCENE 06 · THE CREDENTIALS -->
-  <section id="certs" class="scene section certs" data-scene="6">
-    <p class="scene-kicker" data-reveal data-i18n="kicker.certs">scene 06 · the credentials</p>
+  <!-- SCENE 05 · THE CREDENTIALS -->
+  <section id="certs" class="scene section certs" data-scene="5">
+    <p class="scene-kicker" data-reveal data-i18n="kicker.certs">scene 05 · the credentials</p>
     <h2 class="section-title" data-reveal data-i18n="title.certs">Training and credentials</h2>
     <div id="certs-grid" class="certs-grid"></div>
   </section>
 
-  <!-- SCENE 07 · THE END? -->
-  <section id="contact" class="scene section contact-section" data-scene="7">
-    <p class="scene-kicker" data-reveal data-i18n="kicker.contact">scene 07 · the end?</p>
+  <!-- SCENE 06 · THE END? -->
+  <section id="contact" class="scene section contact-section" data-scene="6">
+    <p class="scene-kicker" data-reveal data-i18n="kicker.contact">scene 06 · the end?</p>
     <h2 class="contact-title" data-reveal data-i18n="title.contact">Let's build something.</h2>
     <p class="contact-sub" data-reveal data-i18n-html="contact.sub">
       Fastest way in is the assistant: press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd>
@@ -334,13 +244,13 @@
      js/vendor so the site still has no build step and no CDN to depend on. -->
 <script src="js/vendor/gsap.min.js?v=3.15.0"></script>
 <script src="js/vendor/ScrollTrigger.min.js?v=3.15.0"></script>
-<script src="js/data.js?v=20"></script>
-<script src="js/data.ar.js?v=20"></script>
-<script src="js/i18n.js?v=19"></script>
-<script src="js/particles.js?v=18"></script>
+<script src="js/data.js?v=22"></script>
+<script src="js/data.ar.js?v=21"></script>
+<script src="js/i18n.js?v=22"></script>
+<script src="js/particles.js?v=20"></script>
 <script src="js/ai-assistant.js?v=20"></script>
-<script src="js/poster.js?v=1"></script>
-<script src="js/cinema.js?v=1"></script>
-<script src="js/app.js?v=19"></script>
+<script src="js/poster.js?v=2"></script>
+<script src="js/cinema.js?v=4"></script>
+<script src="js/app.js?v=23"></script>
 </body>
 </html>

@@ -6,19 +6,18 @@ in a browser, or serve it with anything static.
 ## What's in here
 
 The page plays like a short film as you scroll: an opening poster, then
-seven scenes. A HUD in the corner shows the scene you're in and a
+six scenes. A HUD in the corner shows the scene you're in and a
 timecode that runs with the scroll.
 
 | Scene | What happens |
 |---|---|
-| **00 · opening titles** | The waving poster (`js/poster.js`). A storm of capitals streams past and shutters away, the letters of **L [A] ILA / H [A] JI** roll into place like slot reels around one giant shared *A*, the labels decode, and a hand-inked character rises from the baseline and waves. Hover a letter to re-roll it, hover or click her to wave back (her eyes follow the pointer), click the dice to roll them, click the paper to throw letters, click the signature to replay the intro. She waves again whenever you scroll back up to her. |
-| **01 · the premise** | Pinned and scrubbed: the titles blur back, a deep navy card rises and fills the screen, a phone flies in counting up to 74k lines shipped, then the card pulls back and leaves to reveal the call to action. The card's sheen and the phone follow the pointer. |
+| **00 · opening titles** | The waving poster (`js/poster.js`). A storm of capitals streams past and shutters away, the letters of **L [A] ILA / H [A] JI** roll into place like slot reels around one giant shared *A*, the labels decode, and a hand-inked character rises from the baseline and waves. Hover a letter to re-roll it, hover or click her to wave back (her eyes follow the pointer), click the dice to roll them, click the paper to throw letters. She waves again whenever you scroll back up to her. |
+| **01 · the person** | The bio lights up word by word, at the pace you scroll. |
 | **02 · the headline** | The *Akhbar Al Khaleej* clipping (21 September 2026) spins in like a front page in an old film, then a camera pushes in on the headline, the photo and the paragraphs while subtitles translate the Arabic. Ends on a *featured* stamp and a link to the case study. |
-| **03 · the person** | The bio lights up word by word, at the pace you scroll. |
-| **04 · the work** | A film strip, pinned and pulled sideways, one project per frame (sprocket holes included). Frames with a case study open it. Stacks into a grid on narrow screens. |
-| **05 · the toolkit** | Skill bars plus two giant marquee rows scrubbed by the scroll. |
-| **06 · the credentials** | Certificates as cinema tickets, dealt onto the table. |
-| **07 · the end?** | Contact links, then end credits. "Replay the opening" rewinds the whole film. |
+| **03 · the work** | A film strip, pinned and pulled sideways, one project per frame (sprocket holes included). Frames with a case study open it. Stacks into a grid on narrow screens. |
+| **04 · the toolkit** | Skill bars plus two giant marquee rows scrubbed by the scroll. |
+| **05 · the credentials** | Certificates as cinema tickets, dealt onto the table. |
+| **06 · the end?** | Contact links, then end credits. "Replay the opening" rewinds the whole film. |
 
 The nav and HUD dim ("lights down") while a dark scene fills the screen.
 
@@ -112,23 +111,30 @@ so browsers fetch the new copy.
 
 ## Palette
 
-A formal, low-saturation system — one dominant neutral pair, one accent,
-one status colour:
+Formal, with a soft heart — one dominant neutral pair, one pink lead
+accent, a blush fill, and two supporting colours used in small doses:
 
 | | Hex | RGB | Job |
 |---|---|---|---|
-| Navy | `#13232F` | 19, 35, 47 | the ink; the ground in dark mode |
-| Bone | `#F4F2ED` | 244, 242, 237 | the paper — warm off-white, never stark |
+| Mulberry | `#3A1E2C` | 58, 30, 44 | the ink; the ground in dark mode |
+| Petal | `#FCF6F5` | 252, 246, 245 | the paper — a whisper of pink, never stark |
 | White | `#FFFFFF` | 255, 255, 255 | cards, so they lift off the paper |
-| Brass | `#A77B36` | 167, 123, 54 | the single accent, used sparingly |
-| Sage | `#3F6B52` | 63, 107, 82 | status only — "live / in progress" |
+| Peony | `#E3829E` | 227, 130, 158 | the accent — dots, rules, the giant A |
+| Blush | `#F9E2E8` | 249, 226, 232 | soft fills — chips, chat bubbles, tracks |
+| Butter | `#F7D774` | 247, 215, 116 | the cheerful one — sticky-note stickers, dice, sparkles, highlighter |
+| Pistachio | `#A6D3A0` | 166, 211, 160 | status only — "live / in progress" |
 
-Every other value is a step on one of two ramps: the cool one runs navy →
-slate (`--navy-950` … `--navy-300`), the warm one brass → pale brass. Mid
-steps are fills; the darker steps (`-700`, `-800`) are what text uses, so
-nothing pale ever ends up carrying small type.
+The formality comes from the ink: mulberry reads as near-black, so the
+page keeps a serious backbone while the pink does the charming. Every
+other value is a step on a ramp: mulberry runs deepest → palest
+(`--plum-950` … `--plum-300`), peony runs raspberry → blush. Peony, butter
+and pistachio are fills; their deeper steps (`--peony-700`/`-800`,
+`--pistachio-600`) are what text uses, and text laid on butter is always
+mulberry, so nothing pale ever ends up carrying small type.
+Raspberry (`--peony-700`) is also the buttons — the one place the pink
+gets to be bold.
 
-The formality comes from restraint rather than from the hues: saturation
+The calm comes from restraint rather than from the hues: saturation
 stays low, the accent appears in small doses (kickers, links, rules,
 dots), and **gradients only ever move within one family** — a tonal
 shift, never a rainbow. There are four, split by how much contrast
@@ -136,7 +142,7 @@ whatever sits on top needs: `--grad` (headings), `--grad-cta` (buttons
 and chat bubbles), `--grad-orb` (lit spheres), `--grad-vivid`
 (decoration with no text on it).
 
-Light mode = bone paper, navy ink. Dark mode inverts it. Components never
+Light mode = petal paper, mulberry ink. Dark mode inverts it. Components never
 name a raw colour — they use the role tokens (`--ink`, `--surface`,
 `--accent-1…4`, `--signal`, `--on-grad`, `--on-soft`), so changing a brand
 colour in one place re-themes both modes, including the canvas particles
@@ -156,7 +162,7 @@ js/i18n.js            language engine + the UI string dictionary
 js/particles.js       background canvas animation
 js/ai-assistant.js    the assistant's "brain" (bilingual keyword intents)
 js/poster.js          scene 00, the waving poster — every glyph drawn in code
-js/cinema.js          scenes 01–07: the GSAP ScrollTrigger timelines + the HUD
+js/cinema.js          scenes 01–06: the GSAP ScrollTrigger timelines + the HUD
 js/app.js             rendering + all interactions
 js/vendor/            GSAP 3.15 + ScrollTrigger, vendored (see below)
 assets/               résumé, project videos, the newspaper clipping

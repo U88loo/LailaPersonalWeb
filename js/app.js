@@ -259,7 +259,6 @@ function renderContent() {
   document.getElementById("about-focus").textContent = D.focus;
   document.getElementById("about-status").textContent = D.status;
   document.getElementById("resume-link").href = D.resumeUrl;
-  document.getElementById("cta-resume").href = D.resumeUrl;
   document.getElementById("footer-text").textContent =
     I18N.t("footer.text", { year: new Date().getFullYear() });
 
@@ -268,19 +267,6 @@ function renderContent() {
   // within a word, never across one, so this can't break the shaping.
   document.getElementById("about-text").innerHTML = D.about
     .split(/\s+/).map((w) => `<span class="w">${escapeHtml(w)}</span>`).join(" ");
-
-  // the phone in scene 01 — the first four projects, by their short name
-  // (or the part of the title before the colon). "Live" is read from the
-  // English badge so it holds in either language.
-  document.getElementById("ch-rows").innerHTML = D.projects.slice(0, 4).map((p, i) => {
-    const live = /live/i.test(siteData.projects[i].badge || "");
-    return `
-      <li class="ch-widget ch-row">
-        <span class="ch-row-icon">${p.emoji}</span>
-        <span class="ch-row-text"><b>${escapeHtml(p.short || p.title.split(":")[0].trim())}</b><small>${escapeHtml(p.badge || p.tags[0])}</small></span>
-        <i class="ch-row-dot${live ? " is-live" : ""}"></i>
-      </li>`;
-  }).join("");
 
   // the newspaper scene
   const P = D.press;
@@ -318,9 +304,11 @@ function renderContent() {
   projectsGrid.innerHTML = D.projects.map((p, i) => {
     const hasUrl = p.link && p.link !== "#";
     const clickable = !!p.details || hasUrl;
+    // "live" is read from the English badge, so it holds in either language
+    const live = /live/i.test(siteData.projects[i].badge || "");
     const inner = `
       <span class="frame-no">${escapeHtml(I18N.t("work.frame"))} ${String(i + 1).padStart(2, "0")}</span>
-      ${p.badge ? `<span class="project-sticker"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
+      ${p.badge ? `<span class="project-sticker${live ? " is-live" : ""}"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
       <span class="project-emoji">${p.emoji}</span>
       <h3 class="project-title">${escapeHtml(p.title)}</h3>
       <p class="project-desc">${escapeHtml(p.description)}</p>
@@ -687,7 +675,7 @@ function launchConfetti() {
   const colors = ["--accent-1", "--accent-2", "--accent-3", "--accent-4"]
     .map((t) => (css.getPropertyValue(t) || "").trim())
     .filter(Boolean);
-  if (!colors.length) colors.push("#a77b36");
+  if (!colors.length) colors.push("#e3829e");
   const count = 90;
   for (let i = 0; i < count; i++) {
     const piece = document.createElement("div");
