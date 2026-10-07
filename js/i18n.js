@@ -87,12 +87,13 @@ const I18N = (function () {
       "about.resume": "download résumé ↓",
 
       "title.skills": "Tools I reach for",
-      "title.work": "Things I've shipped",
+      "title.work": "Now showing",
       "title.certs": "Training and credentials",
       "title.contact": "Let's build something.",
 
-      "work.hint": "keep scrolling, the reel moves sideways",
+      "work.hint": "find a seat, the lights are going down",
       "work.frame": "frame",
+      "work.index": "the reel",
 
       "contact.sub":
         "Fastest way in is the assistant: press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd> and ask it for my email. Or just use the old-fashioned links below.",
@@ -120,6 +121,13 @@ const I18N = (function () {
       "pm.howItWorks": "How it works",
       "pm.builtWith": "Built with",
       "pm.team": "Team",
+      "pm.roadmap": "Build progress",
+      "pm.roadDone": "{done} of {total} done",
+      "pm.part": "part",
+      "pm.status.done": "done",
+      "pm.status.next": "up next",
+      "pm.status.planned": "planned",
+      "pm.sample": "Straight from the model",
 
       "ai.orb": "Open AI assistant",
       "ai.dialog": "Laila AI assistant",
@@ -203,12 +211,13 @@ const I18N = (function () {
       "about.resume": "تحميل السيرة الذاتية ↓",
 
       "title.skills": "الأدوات التي أعمل بها",
-      "title.work": "أشياء أطلقتها",
+      "title.work": "يُعرض الآن",
       "title.certs": "التدريب والشهادات",
       "title.contact": "لنبنِ شيئاً معاً.",
 
-      "work.hint": "واصل التمرير، الشريط يتحرّك جانبياً",
+      "work.hint": "اتخذ مقعدك، الأضواء على وشك أن تخفت",
       "work.frame": "لقطة",
+      "work.index": "الشريط",
 
       "contact.sub":
         "أسرع طريق هو المساعد: اضغط <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd> واسأله عن بريدي. أو استخدم الروابط التقليدية أدناه.",
@@ -236,6 +245,13 @@ const I18N = (function () {
       "pm.howItWorks": "كيف يعمل",
       "pm.builtWith": "بُني باستخدام",
       "pm.team": "الفريق",
+      "pm.roadmap": "مراحل البناء",
+      "pm.roadDone": "أُنجز {done} من {total}",
+      "pm.part": "المرحلة",
+      "pm.status.done": "أُنجزت",
+      "pm.status.next": "التالية",
+      "pm.status.planned": "مخطَّطة",
+      "pm.sample": "مباشرة من النموذج",
 
       "ai.orb": "فتح المساعد الذكي",
       "ai.dialog": "مساعد ليلى الذكي",

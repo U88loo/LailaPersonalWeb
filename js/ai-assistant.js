@@ -90,6 +90,15 @@ const LailaAI = (function () {
         action: () => scrollToSection("work")
       },
       {
+        name: "dangerai",
+        // "language model" is two words, so it outscores the skills intent's bare "language"
+        keywords: ["dangerai", "danger ai", "about dangerai", "dangerai project", "language model", "llm", "gpt", "transformer", "tinystories", "tokenizer", "pytorch"],
+        keywordsAr: ["نموذج لغوي", "النموذج اللغوي", "نموذج لغة", "دينجر", "مجزئ النصوص"],
+        reply: () => `DANGERAI is a GPT-style language model Laila is building from zero on her own laptop, with a 4 GB graphics card: her own byte-pair-encoding tokenizer, transformer, training loop and local web page, with no pretrained weights and no AI APIs. The first model has 27.3 million parameters, trained on 553 million tokens in about four and a half hours, and now writes short stories and streams them to a browser. It's still under construction: the goal is an offline assistant that answers questions from a construction company's documents.`,
+        replyAr: () => `DANGERAI نموذج لغوي على طراز GPT تبنيه ليلى من الصفر على حاسوبها المحمول ببطاقة رسوميات ذاكرتها 4 جيجابايت: مُجزِّئ نصوص بترميز أزواج البايتات (BPE)، ومحوّل، وحلقة تدريب، وصفحة ويب محلية، كلها من كتابتها، بلا أوزان مدرَّبة مسبقاً وبلا واجهات ذكاء اصطناعي. يضم النموذج الأول 27.3 مليون مُعامِل، دُرِّب على 553 مليون رمز في نحو أربع ساعات ونصف، ويكتب الآن قصصاً قصيرة ويبثّها إلى المتصفح. ولا يزال قيد الإنشاء: الهدف مساعد يعمل دون إنترنت ويجيب عن الأسئلة من مستندات شركة مقاولات.`,
+        action: () => scrollToSection("work")
+      },
+      {
         name: "pitch",
         keywords: ["how can laila help", "help us", "why hire", "why should we hire", "what can you do for us", "hire laila", "pitch me"],
         keywordsAr: ["أن تساعدنا", "تساعدنا", "لماذا نوظف", "ماذا تقدم لنا", "لماذا نختارها", "لماذا نعينها"],
@@ -153,8 +162,8 @@ const LailaAI = (function () {
         name: "aiDetail",
         keywords: ["machine learning experience", "ai experience", "artificial intelligence experience", "ml experience"],
         keywordsAr: ["خبرة في الذكاء الاصطناعي", "تعلم الآلة", "خبرتها في الذكاء", "تعلّم الآلة"],
-        reply: () => `Laila completed a "Learn & Build Machine Learning Models with Python" course on Coursera, and put AI into practice building Dosely, an AI + OCR medication safety scanner with a built-in chat assistant, Pillo.`,
-        replyAr: () => `أكملت ليلى دورة "تعلّم وبناء نماذج تعلُّم الآلة بلغة Python" على Coursera، وطبّقت الذكاء الاصطناعي عملياً في بناء Dosely، ماسح سلامة الأدوية بالذكاء الاصطناعي والتعرّف الضوئي على الحروف، مع مساعد محادثة مدمج هو Pillo.`,
+        reply: () => `Laila completed a "Learn & Build Machine Learning Models with Python" course on Coursera, and put AI into practice building Dosely, an AI + OCR medication safety scanner with a built-in chat assistant, Pillo. She's now building DANGERAI, a GPT-style language model written and trained from scratch on her own laptop.`,
+        replyAr: () => `أكملت ليلى دورة "تعلّم وبناء نماذج تعلُّم الآلة بلغة Python" على Coursera، وطبّقت الذكاء الاصطناعي عملياً في بناء Dosely، ماسح سلامة الأدوية بالذكاء الاصطناعي والتعرّف الضوئي على الحروف، مع مساعد محادثة مدمج هو Pillo. وتبني حالياً DANGERAI، نموذجاً لغوياً على طراز GPT كتبته ودرّبته من الصفر على حاسوبها المحمول.`,
         action: () => scrollToSection("work")
       },
       {

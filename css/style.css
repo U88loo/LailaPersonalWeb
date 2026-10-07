@@ -418,6 +418,81 @@ body.pm-open #scroll-progress { display: none !important; }
   background: var(--grad-soft); border: 1px solid var(--border);
 }
 
+/* build progress: a meter, then a rail of parts. Finished parts are filled
+   peony, the one on the bench is butter and pulses, the rest are hollow on
+   a dashed rail. The rail sits on the inline-start side, so it mirrors. */
+.pm-road-meter { display: flex; align-items: center; gap: 12px; }
+.pm-road-bar { flex: 1; height: 8px; border-radius: 999px; background: var(--bg-soft); overflow: hidden; }
+.pm-road-fill { display: block; height: 100%; border-radius: inherit; background: var(--grad-vivid); transform-origin: left center; }
+.pm-road-count { font-family: var(--font-mono); font-size: .75rem; color: var(--ink-faint); white-space: nowrap; }
+
+.pm-road { list-style: none; margin: 22px 0 0; padding: 0; }
+.pm-road-step {
+  position: relative; display: grid; grid-template-columns: 22px 1fr auto;
+  column-gap: 14px; align-items: start; padding-bottom: 18px;
+}
+.pm-road-step:last-child { padding-bottom: 0; }
+/* node centre and rail both sit 10px down and 11px in, and the rail runs
+   on to the next node's centre */
+.pm-road-node {
+  position: relative; z-index: 1; justify-self: center; margin-top: 3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--accent-2);
+}
+.pm-road-line {
+  position: absolute; top: 10px; bottom: -10px; inset-inline-start: 10px; width: 2px;
+  background: var(--accent-3); transform-origin: top center;
+}
+.is-next .pm-road-line,
+.is-planned .pm-road-line { background: repeating-linear-gradient(to bottom, var(--accent-2) 0 3px, transparent 3px 7px); opacity: .45; }
+.is-done .pm-road-node { background: var(--accent-3); border-color: var(--accent-3); }
+.is-next .pm-road-node { background: var(--butter); border-color: var(--butter-600); animation: roadNext 1.8s infinite; }
+.is-planned .pm-road-node { opacity: .6; }
+@keyframes roadNext {
+  0% { box-shadow: 0 0 0 0 rgba(var(--butter-rgb), .75); }
+  70% { box-shadow: 0 0 0 8px rgba(var(--butter-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--butter-rgb), 0); }
+}
+
+.pm-road-body { min-width: 0; }
+.pm-road-part { display: block; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+.pm-road-body strong { display: block; margin-top: 2px; font-size: .95rem; line-height: 1.4; }
+.is-planned .pm-road-body strong { color: var(--ink-soft); font-weight: 600; }
+.pm-road-note { display: block; margin-top: 4px; font-size: .86rem; line-height: 1.6; color: var(--ink-faint); }
+.pm-road-status {
+  margin-top: 1px; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-mono); font-size: .66rem; font-weight: 600;
+  border: 1px solid var(--border); color: var(--ink-faint);
+}
+.is-done .pm-road-status { color: var(--on-soft); background: var(--bg-soft); border-color: transparent; }
+/* text on butter is always mulberry */
+.is-next .pm-road-status { color: var(--plum-900); background: var(--butter); border-color: var(--butter-600); }
+
+/* the model's own words on a ruled exercise-book page, like its local web
+   page: the prompt in pencil, the model's words in ink, a peony margin
+   rule. A div rather than a <p>, so the .pm-block p rules can't change
+   its line-height and walk the text off the ruling. One rule per 1.9em
+   line, starting at the top padding. */
+.pm-sample { margin: 0; }
+.pm-sample-page {
+  padding: 18px 22px 18px 54px; border-radius: 12px; border: 1px solid var(--border);
+  font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 1rem; line-height: 1.9em; color: var(--ink);
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(90deg, transparent 38px, rgba(var(--peony-rgb), .55) 38px, rgba(var(--peony-rgb), .55) 40px, transparent 40px),
+    linear-gradient(to bottom, transparent calc(100% - 1px), var(--border) calc(100% - 1px));
+  background-size: 100% 100%, 100% 1.9em;
+  background-repeat: no-repeat, repeat;
+  background-position: 0 0, 0 18px;
+}
+.pm-sample-prompt { color: var(--ink-faint); }
+.pm-sample-caret {
+  display: inline-block; width: 2px; height: 1.1em; margin-inline-start: 3px; vertical-align: -.18em;
+  background: var(--accent-3); animation: caretBlink 1s steps(1) infinite;
+}
+@keyframes caretBlink { 50% { opacity: 0; } }
+.pm-sample figcaption { margin-top: 8px; font-family: var(--font-mono); font-size: .75rem; line-height: 1.6; color: var(--ink-faint); }
+
 /* ---------- contact ---------- */
 .contact-section { text-align: center; }
 .contact-sub { color: var(--ink-soft); max-width: 50ch; margin: 0 auto 36px; }
@@ -570,6 +645,12 @@ body.portal-open #portal-overlay { clip-path: circle(150% at 50% 50%); }
    after forcing its direction */
 :root[dir="rtl"] .pm-stat b { text-align: center; }
 :root[dir="rtl"] .pm-chips span { text-align: start; }
+
+/* the roadmap meter fills from the right in Arabic, and its tracked-out
+   part labels go back to zero spacing like every other label */
+:root[dir="rtl"] .pm-road-fill { transform-origin: right center; }
+:root[dir="rtl"] .pm-road-part { letter-spacing: 0; font-size: .74rem; }
+:root[dir="rtl"] .pm-road-note { line-height: 1.85; }
 
 /* the butterflies drift with the reading direction: right-to-left in Arabic */
 :root[dir="rtl"] .butterfly { left: auto; right: -8%; animation-name: butterflyDriftRtl; }

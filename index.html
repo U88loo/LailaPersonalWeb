@@ -18,8 +18,8 @@
      Arabic is loaded alongside them and takes over under [dir="rtl"]. It's
      loaded in both languages because the ع on the language toggle needs it. -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=23">
-<link rel="stylesheet" href="css/cinema.css?v=8">
+<link rel="stylesheet" href="css/style.css?v=24">
+<link rel="stylesheet" href="css/cinema.css?v=11">
 <!-- Set lang/dir and theme before first paint — otherwise an Arabic visitor
      gets a visible LTR→RTL flip, and a dark-mode visitor a white flash. -->
 <script>
@@ -149,16 +149,39 @@
   </section>
 
   <!-- SCENE 03 · THE WORK
-       A film strip: pinned, and scrolled sideways on wide screens. -->
+       A screening, on wide screens: a title card, the lights go down, a
+       film-leader countdown, then one project per shot on the screen with
+       the reel's index beside it. Everywhere else, a grid of frames. The
+       room, leader, index, sprockets and flash only show in the screening. -->
   <section id="work" class="scene work" data-scene="3">
     <div class="work-pin">
+      <div class="work-room" aria-hidden="true"></div>
       <header class="work-head section">
         <p class="scene-kicker" data-i18n="kicker.work">scene 03 · the work</p>
-        <h2 class="section-title" data-i18n="title.work">Things I've shipped</h2>
-        <p class="work-hint" data-i18n="work.hint">keep scrolling, the reel moves sideways</p>
+        <h2 class="work-title" data-i18n="title.work">Now showing</h2>
+        <p class="work-hint" data-i18n="work.hint">find a seat, the lights are going down</p>
       </header>
-      <div class="filmstrip">
-        <div id="projects-grid" class="projects-track"></div>
+      <div class="work-iris" aria-hidden="true"></div>
+      <div class="work-leader" aria-hidden="true">
+        <span class="leader-ring"></span>
+        <span class="leader-ring leader-ring-2"></span>
+        <span class="leader-cross"></span>
+        <span class="leader-hand"></span>
+        <span class="leader-num">3</span>
+        <span class="leader-num">2</span>
+        <span class="leader-num">1</span>
+      </div>
+      <div class="work-stage">
+        <ol class="work-index" id="work-index" data-i18n-aria-label="work.index" aria-label="the reel"></ol>
+        <div class="work-screen">
+          <div class="work-gate">
+            <span class="work-sprockets" aria-hidden="true"></span>
+            <div id="projects-grid" class="projects-track"></div>
+            <span class="work-sprockets work-sprockets-end" aria-hidden="true"></span>
+            <span class="work-flash" aria-hidden="true"></span>
+          </div>
+          <p class="work-counter" id="work-counter" aria-hidden="true"></p>
+        </div>
       </div>
     </div>
   </section>
@@ -244,13 +267,13 @@
      js/vendor so the site still has no build step and no CDN to depend on. -->
 <script src="js/vendor/gsap.min.js?v=3.15.0"></script>
 <script src="js/vendor/ScrollTrigger.min.js?v=3.15.0"></script>
-<script src="js/data.js?v=22"></script>
-<script src="js/data.ar.js?v=21"></script>
-<script src="js/i18n.js?v=22"></script>
+<script src="js/data.js?v=24"></script>
+<script src="js/data.ar.js?v=23"></script>
+<script src="js/i18n.js?v=24"></script>
 <script src="js/particles.js?v=20"></script>
-<script src="js/ai-assistant.js?v=20"></script>
+<script src="js/ai-assistant.js?v=21"></script>
 <script src="js/poster.js?v=2"></script>
-<script src="js/cinema.js?v=4"></script>
-<script src="js/app.js?v=23"></script>
+<script src="js/cinema.js?v=7"></script>
+<script src="js/app.js?v=25"></script>
 </body>
 </html>

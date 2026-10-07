@@ -360,14 +360,35 @@ html.cine .press-cta { position: absolute; z-index: 6; left: 0; right: 0; bottom
 }
 
 /* =========================================================
-   SCENE 03 · THE WORK — the film strip
+   SCENE 03 · THE WORK — the screening
+   By default a big title over a grid of frames. Under .is-reel
+   (cinema.js, wide and tall windows with motion) it's a screening
+   room: the title card, then the leader, then one frame at a
+   time in the gate, with the reel's index beside it.
    ========================================================= */
 .work { position: relative; }
-.work-pin { position: relative; padding: 130px 0 50px; }
+.work-pin { position: relative; padding: 130px 0 60px; }
 .work-head.section { padding-top: 0; padding-bottom: 0; }
-.work-head .section-title { margin-bottom: 10px; }
-.work-hint { display: none; margin: 0; font-family: var(--font-mono); font-size: .74rem; color: var(--ink-faint); }
-.filmstrip { position: relative; margin-top: 30px; }
+.work-title {
+  margin: 0; font-size: clamp(2.8rem, 9vw, 7.5rem); font-weight: 700;
+  line-height: .98; letter-spacing: -.045em; color: var(--ink);
+}
+:root[dir="rtl"] .work-title { letter-spacing: 0; line-height: 1.3; }
+/* the title's words, split by cinema.js: each rises out of its own mask
+   (padded so descenders and Arabic marks aren't cropped by it), and the
+   last one gets a highlighter swipe like the one in scene 01 */
+.wt { display: inline-block; overflow: hidden; vertical-align: top; padding: .08em .03em .16em; margin: -.08em -.03em -.16em; }
+.wt-in { display: inline-block; }
+.wt:last-child .wt-in { background: linear-gradient(transparent 62%, rgba(var(--butter-rgb), .6) 0) no-repeat 0 0 / 100% 100%; }
+:root[data-theme="dark"] .wt:last-child .wt-in { background-image: linear-gradient(transparent 62%, rgba(var(--butter-rgb), .3) 0); }
+:root[dir="rtl"] .wt:last-child .wt-in { background-position: 100% 0; }
+.work-hint {
+  display: none; margin: 22px 0 0; font-family: var(--font-mono); font-size: .76rem;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint);
+}
+/* the screening's furniture: only built into the room under .is-reel */
+.work-room, .work-iris, .work-leader, .work-index, .work-sprockets, .work-flash, .work-counter { display: none; }
+.work-stage { margin-top: 44px; }
 .projects-track {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px;
   max-width: 1080px; margin: 0 auto; padding: 0 32px;
@@ -400,6 +421,8 @@ html.cine .press-cta { position: absolute; z-index: 6; left: 0; right: 0; bottom
 :root[dir="rtl"] .project-sticker { transform: rotate(4deg); }
 .project-sticker.is-live { background: var(--surface); border-color: var(--signal); color: var(--signal-ink); }
 .sticker-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+/* still being built: the dot becomes a strip of hazard tape */
+.is-wip .sticker-dot { width: 15px; height: 7px; border-radius: 2px; background: repeating-linear-gradient(-45deg, var(--plum-900) 0 2.5px, transparent 2.5px 5px); }
 .is-live .sticker-dot { background: var(--signal); box-shadow: 0 0 0 0 rgba(var(--signal-rgb), .6); animation: pulseSignal 1.8s infinite; }
 @keyframes pulseSignal {
   0% { box-shadow: 0 0 0 0 rgba(var(--signal-rgb), .55); }
@@ -412,28 +435,151 @@ html.cine .press-cta { position: absolute; z-index: 6; left: 0; right: 0; bottom
 .project-tags { position: relative; display: flex; flex-wrap: wrap; gap: 8px; }
 .project-tags span { font-family: var(--font-mono); font-size: .7rem; color: var(--on-soft); background: var(--bg-soft); padding: 3px 9px; border-radius: 999px; }
 .project-link { position: relative; display: inline-flex; margin-top: auto; padding-top: 16px; font-size: .85rem; font-weight: 600; color: var(--accent-2); }
+/* the frame's number, huge and outlined, tucked into the corner behind
+   the content (which is positioned, so it paints on top) */
+.project-num {
+  position: absolute; bottom: -.16em; inset-inline-end: 12px;
+  font-size: 6.5rem; font-weight: 700; line-height: 1; letter-spacing: -.05em; direction: ltr;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(var(--peony-rgb), .3); pointer-events: none;
+}
 
-/* the strip itself — wide screens with motion only (cinema.js adds .is-strip) */
-.work.is-strip .work-pin { height: 100vh; padding: var(--nav-h) 0 0; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-.work.is-strip .work-hint { display: block; }
-.work.is-strip .filmstrip {
-  margin-top: 24px; padding: 40px 0;
-  background: linear-gradient(180deg, rgb(var(--shade-rgb)) 0%, var(--plum-950) 50%, rgb(var(--shade-rgb)) 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(255,255,255,.05), 0 30px 60px -30px rgba(0,0,0,.6);
+/* ---------- the screening (cinema.js adds .is-reel) ---------- */
+.work.is-reel .work-pin { height: 100vh; padding: 0; overflow: hidden; }
+
+/* the room, dark in either theme, with the projector's beam falling from
+   the booth onto the screen */
+.work.is-reel .work-room {
+  display: block; position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 50% 35%, var(--screen-2) 0%, rgb(var(--shade-rgb)) 78%);
 }
-.work.is-strip .projects-track {
-  display: flex; width: max-content; max-width: none; gap: 30px;
-  margin: 0; padding: 0 8vw; position: relative; will-change: transform;
+.work.is-reel .work-room::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 60% at 50% -8%, rgba(var(--petal-rgb), .13), transparent 70%);
 }
-/* sprocket holes ride along with the frames */
-.work.is-strip .projects-track::before,
-.work.is-strip .projects-track::after {
-  content: ""; position: absolute; left: 0; right: 0; height: 14px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='14'><rect x='10' y='1' width='16' height='12' rx='3' fill='%23fcf6f5' fill-opacity='.85'/></svg>") repeat-x;
+
+/* the title card, centred on the page before the lights go down */
+.work.is-reel .work-head {
+  position: absolute; inset: 0; z-index: 2; max-width: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--nav-h) 24px 0; text-align: center;
 }
-.work.is-strip .projects-track::before { top: -28px; }
-.work.is-strip .projects-track::after { bottom: -28px; }
-.work.is-strip .project-card { flex: none; width: min(410px, 76vw); min-height: min(430px, 54vh); }
+.work.is-reel .work-title { font-size: clamp(4rem, 13vw, 12rem); }
+.work.is-reel .work-hint { display: block; }
+
+/* the lights going down: an iris of dark that cinema.js closes by
+   shrinking --iris, the radius of the clear centre */
+.work.is-reel .work-iris {
+  --iris: 110vmax;
+  display: block; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: radial-gradient(circle at 50% 55%, transparent var(--iris), rgb(var(--shade-rgb)) calc(var(--iris) + 18vmax));
+}
+
+/* the film leader: rings, crosshair, a sweeping hand, 3 · 2 · 1 */
+.work.is-reel .work-leader {
+  display: block; position: absolute; z-index: 4; inset: var(--nav-h) 0 0; margin: auto;
+  width: min(52vh, 420px); height: min(52vh, 420px);
+}
+.leader-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(var(--petal-rgb), .5); }
+.leader-ring-2 { inset: 10%; border-width: 1px; border-color: rgba(var(--petal-rgb), .26); }
+.leader-cross { position: absolute; inset: -14%; }
+.leader-cross::before, .leader-cross::after { content: ""; position: absolute; background: rgba(var(--petal-rgb), .2); }
+.leader-cross::before { left: 0; right: 0; top: 50%; height: 1px; }
+.leader-cross::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.leader-hand {
+  position: absolute; left: 50%; top: 0; width: 2px; height: 50%; margin-left: -1px;
+  transform-origin: 50% 100%; background: linear-gradient(to top, rgba(var(--peony-rgb), .1), var(--peony-400));
+}
+.leader-num {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: min(24vh, 190px); font-weight: 600; line-height: 1; color: var(--petal);
+}
+
+/* the stage: the reel's index, then the screen with its counter */
+.work.is-reel .work-stage {
+  position: absolute; inset: var(--nav-h) 0 0; z-index: 4; margin: 0;
+  display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 44px;
+  padding: 3vh 5vw 4vh;
+}
+.work.is-reel .work-index { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.work-index button {
+  display: flex; align-items: baseline; gap: 12px; width: 100%; padding: 8px 12px;
+  background: none; border: 0; border-inline-start: 2px solid transparent;
+  border-start-end-radius: 8px; border-end-end-radius: 8px;
+  font-family: var(--font-mono); font-size: .74rem; text-align: start;
+  color: rgba(var(--petal-rgb), .42); cursor: pointer;
+  transition: color .3s ease, background-color .3s ease, border-color .3s ease;
+}
+.work-index b { font-weight: 600; }
+.work-index span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.work-index button:hover { color: rgba(var(--petal-rgb), .82); }
+.work-index button.is-active { color: var(--petal); background: rgba(255, 255, 255, .06); border-inline-start-color: var(--peony-400); }
+.work-index button.is-active b { color: var(--peony-400); }
+.work-index button:focus-visible { outline: 2px solid var(--peony-400); outline-offset: 2px; }
+
+.work.is-reel .work-screen { width: 100%; max-width: 1060px; justify-self: center; }
+/* the gate: a frame of film base with sprocket holes down both sides */
+.work.is-reel .work-gate {
+  position: relative; height: min(600px, calc(100vh - var(--nav-h) - 7vh - 34px));
+  border-radius: 10px; background: rgb(var(--shade-rgb));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .05), 0 40px 120px -30px rgba(0, 0, 0, .9), 0 0 140px rgba(var(--petal-rgb), .07);
+}
+/* one hole per 32px — cinema.js advances them three holes a frame */
+.work.is-reel .work-sprockets {
+  display: block; position: absolute; top: 0; bottom: 0; inset-inline-start: 8px; width: 18px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='32'><rect x='3' y='9' width='12' height='14' rx='3' fill='%23fcf6f5' fill-opacity='.55'/></svg>") repeat-y 0 0;
+}
+.work.is-reel .work-sprockets-end { inset-inline-start: auto; inset-inline-end: 8px; }
+.work.is-reel .projects-track { position: absolute; inset: 14px 34px; display: block; max-width: none; margin: 0; padding: 0; }
+.work.is-reel .work-flash {
+  display: block; position: absolute; inset: 14px 34px; z-index: 4;
+  border-radius: 16px; background: var(--petal); opacity: 0; pointer-events: none;
+}
+/* centred: the HUD and the assistant's orb own the two bottom corners */
+.work.is-reel .work-counter {
+  display: block; min-height: 1.4em; margin: 12px 0 0; text-align: center;
+  font-family: var(--font-mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(var(--petal-rgb), .55);
+}
+:root[dir="rtl"] .work.is-reel .work-counter { letter-spacing: 0; }
+
+/* a frame on the screen: the number and emoji on one side, the story on
+   the other. GSAP drives its transform and clip, so no transform
+   transition or hover lift here to fight it. */
+.work.is-reel .project-card {
+  position: absolute; inset: 0; min-height: 0;
+  display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); grid-auto-rows: min-content;
+  align-content: center; column-gap: 6%; padding: 58px 6% 44px; border-radius: 16px;
+  box-shadow: none; transition: border-color .3s ease;
+}
+.work.is-reel .project-card:hover { transform: none; box-shadow: none; }
+.work.is-reel .frame-no { top: 24px; inset-inline-start: 28px; font-size: .72rem; }
+.work.is-reel .project-sticker { top: 20px; inset-inline-end: 22px; font-size: .74rem; padding: 6px 13px; }
+.work.is-reel .project-num {
+  position: relative; inset: auto; grid-column: 1; grid-row: 1 / span 4; align-self: center; justify-self: center;
+  font-size: clamp(7rem, min(16vw, 30vh), 15rem); line-height: .85; -webkit-text-stroke: 2px var(--accent-3);
+}
+.work.is-reel .project-emoji {
+  grid-column: 1; grid-row: 1 / span 4; align-self: end; justify-self: end; margin: 0;
+  font-size: clamp(2.6rem, 7vh, 4rem); filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .18));
+}
+.work.is-reel .project-title,
+.work.is-reel .project-desc,
+.work.is-reel .project-tags,
+.work.is-reel .project-link { grid-column: 2; }
+.work.is-reel .project-title { margin-bottom: 14px; font-size: clamp(1.5rem, min(2.6vw, 4.4vh), 2.6rem); line-height: 1.12; letter-spacing: -.02em; }
+:root[dir="rtl"] .work.is-reel .project-title { letter-spacing: 0; line-height: 1.4; }
+.work.is-reel .project-desc { max-width: 48ch; margin-bottom: 18px; font-size: clamp(.92rem, 2vh, 1.06rem); line-height: 1.65; }
+.work.is-reel .project-link {
+  justify-self: start; margin-top: 24px; padding: 10px 20px; border-radius: 999px;
+  background: var(--grad-cta); color: var(--on-grad); box-shadow: var(--shadow-md); font-size: .9rem;
+}
+
+/* without the room for the index, the screen takes the whole stage; the
+   counter still says where in the reel you are */
+@media (max-width: 1179px) {
+  .work.is-reel .work-stage { grid-template-columns: minmax(0, 1fr); }
+  .work.is-reel .work-index { display: none; }
+}
 
 /* =========================================================
    SCENE 04 · THE TOOLKIT

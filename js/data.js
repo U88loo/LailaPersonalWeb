@@ -85,7 +85,7 @@ const siteData = {
   // above the English and is blanked in the Arabic overlay.
   press: {
     image: "assets/press-akhbar-alkhaleej-2026.webp",
-    project: 1, // opens this project's case study (index into `projects`)
+    project: 2, // opens this project's case study (index into `projects`)
     alt:
       "Clipping from Akhbar Al Khaleej, Monday 21 September 2026, headlined " +
       "“From the University of Bahrain, she developed an electronic system for the centre”, " +
@@ -151,6 +151,112 @@ const siteData = {
   ],
 
   projects: [
+    {
+      emoji: "🏗️",
+      title: "DANGERAI: A Language Model Built from Scratch",
+      description: "A GPT-style language model written and trained from zero on a 4 GB laptop GPU: my own tokenizer, transformer and training loop, no pretrained weights, no AI APIs. It writes short stories today; next it learns to answer questions from documents, offline.",
+      tags: ["Python", "PyTorch", "Transformer", "From Scratch"],
+      badge: "Under construction",
+      link: "#",
+
+      details: {
+        tagline: "A language model with no borrowed parts, trained from zero on a laptop.",
+        role: "Sole developer · Tokenizer, model, training and web page, all from scratch · Under construction",
+        overview: [
+          "DANGERAI is a GPT-style language model I'm building from zero and training on my own laptop, which has a 4 GB graphics card. It uses no pretrained weights, no tokenizer libraries and no external AI APIs: the tokenizer, the transformer, the training loop, the text generator and a local web page were all written for this project.",
+          "It started with a request from a construction company: give the AI a document, ask a question, and have it find the answer, without company files ever leaving the company's own machines. That's the end goal, a document question-answering assistant that runs fully offline.",
+          "The first milestone works. A 27.3-million-parameter model trained on 553 million tokens of short stories in about four and a half hours, and its validation loss fell from 8.44 to 1.15. It now writes coherent short stories and streams them to a browser at about 97 tokens per second. Next comes a new model, pretrained on English Wikipedia."
+        ],
+
+        // `roadmap` is a build-progress track for work still under
+        // construction: each step is "done", "next" or "planned", with an
+        // optional `note`. `sample` is something the project itself wrote:
+        // the prompt in pencil, the output in ink. Both play in with GSAP as
+        // the popup scrolls to them (js/cinema.js), and both are optional.
+        roadmap: {
+          steps: [
+            { part: "1", title: "Setup, data and tokenizer", status: "done" },
+            { part: "2", title: "The transformer model", status: "done" },
+            { part: "3", title: "The training loop", status: "done" },
+            { part: "4", title: "Text generation and local web page", status: "done" },
+            { part: "5a", title: "Pretrain a new model on English Wikipedia", status: "next", note: "A new 16,384-token tokenizer from the same code, about 3 billion tokens, and roughly 24 hours of training on the laptop." },
+            { part: "5b", title: "Teach the model to answer questions from a passage", status: "planned", note: "Public passage, question and answer examples, scored on ones it has never seen." },
+            { part: "6", title: "Document search and file intake", status: "planned", note: "Text pulled from PDF and Word files, split into passages and ranked with BM25, so the model reads only the relevant ones." },
+            { part: "7", title: "Website for the company's staff", status: "planned", note: "Log in, upload documents, ask questions. Every answer shows the passage and page it came from." },
+            { part: "8", title: "Test on construction-style documents", status: "planned" },
+            { part: "9", title: "Scale up to stronger hardware", status: "planned" }
+          ]
+        },
+        stats: [
+          { value: "27.3M", label: "parameters, every one trained here" },
+          { value: "553M", label: "training tokens" },
+          { value: "4.5 h", label: "first full training run" },
+          { value: "1.15", label: "validation loss, down from 8.44" },
+          { value: "4 GB", label: "of graphics memory to fit it all in" },
+          { value: "4,096", label: "token vocabulary, own BPE tokenizer" },
+          { value: "97", label: "tokens a second, streamed to the browser" },
+          { value: "0", label: "pretrained weights or AI APIs" }
+        ],
+        sample: {
+          prompt: "Once upon a time",
+          text: ", there was a big rock. This rock was very old. It lived in a forest. The rock had many friends. They liked to play and have fun. One day, a little girl came to the forest. She saw the rock and thought it was a good day. She wanted to take the rock home. The rock was happy to be with the girl. They played all day and had a great time. But then, a big storm came. The wind blew the rock away",
+          caption: "From the finished story model: the prompt was “Once upon a time”, and it wrote the rest. The characters hold and the plot moves; the logic still slips in places, as expected at 27 million parameters."
+        },
+        sections: [
+          {
+            title: "Four rules it's built under",
+            items: [
+              { emoji: "🔌", title: "No external AI APIs", text: "The finished system has to run without any outside AI service." },
+              { emoji: "🔒", title: "Documents stay private", text: "Company files should never leave the company's own machines." },
+              { emoji: "🧱", title: "Built from zero", text: "No pretrained weights and no ready-made tokenizer. Every weight is trained in this project." },
+              { emoji: "💻", title: "Trained on my own computer", text: "Training runs on my laptop, not on rented servers. Rented GPUs stay on the list as a later scaling option." }
+            ]
+          },
+          {
+            title: "How it's built",
+            items: [
+              { emoji: "🔤", title: "Own byte-pair-encoding tokenizer", text: "Train, encode, decode, save and load, written from scratch. 4,096 tokens: 256 raw bytes, 3,839 learned merges and one end-of-story token, at about 4 characters per token. The full 2.1 GB dataset encoded in 42 seconds on every CPU core, and 1,000 unseen stories came back exactly after encode and decode." },
+              { emoji: "🧠", title: "Decoder-only transformer", text: "8 layers, width 512, 8 attention heads of 64 and a 512-token context. Rotary position embeddings, RMSNorm, pre-norm blocks, a GELU MLP widening 512 to 2,048, no biases, and one embedding table shared by the input and output layers." },
+              { emoji: "🧪", title: "Checked before any training", text: "A real batch gave a starting loss of 8.443, against 8.318 for guessing evenly among 4,096 tokens. Changing the last token left every earlier prediction unchanged, so no position can peek ahead." }
+            ]
+          },
+          {
+            title: "Training on 4 GB",
+            items: [
+              { emoji: "📏", title: "Batch size measured, not guessed", text: "Batch 16 ran at 35,543 tokens a second in 2.34 GB. The benchmark also caught Windows quietly spilling a full card into system memory instead of raising an out-of-memory error, which made batch 64 ten times slower." },
+              { emoji: "⚙️", title: "The loop", text: "AdamW with a 500-update warm-up and cosine decay, gradient clipping, and gradients added over 4 batches for 32,768 tokens per update, sampled as random 512-token windows straight from disk." },
+              { emoji: "💾", title: "Built to survive a pulled plug", text: "Checkpoints every 15 minutes and on every new best, and a resume that restores the model, the optimizer and the step count. In a crash test a timer killed the run at 600 seconds; it resumed from update 600, and the reloaded checkpoint gave a validation loss of exactly 2.1014, the value logged before the kill." },
+              { emoji: "📉", title: "The full run", text: "16,863 updates over about 552 million tokens in about four and a half hours, holding about 36,200 tokens a second to the end at 68 to 69 °C. Training and validation loss finished nearly equal, 1.1425 and 1.1496, so it learned the language rather than memorising its stories." }
+            ]
+          },
+          {
+            title: "Generation and the local page",
+            items: [
+              { emoji: "🎛️", title: "Temperature and top-k", text: "Defaults of temperature 0.8 and top-k 50. At 0.2 the stories are smooth but repetitive; at 1.2 the plots surprise more and slip more. With top-k off at 1.2, thousands of unlikely tokens held 16% of the odds and produced broken words like “mixedocore”." },
+              { emoji: "📓", title: "An exercise-book page", text: "A local page writes the continuation onto a ruled exercise-book page, the opening in pencil grey and the model's words in ink blue, with temperature, top-k and the token limit in a settings panel. The first words arrive after 0.34 seconds." },
+              { emoji: "🏠", title: "Local only", text: "The server uses only Python's standard library and listens on 127.0.0.1, so other computers can't reach it, and the page loads no outside scripts or fonts." }
+            ]
+          },
+          {
+            title: "Where it stands",
+            intro: "Today it writes children's stories. It can't yet answer questions about a document, and it's worth being straight about why.",
+            items: [
+              { emoji: "📚", title: "Narrow knowledge", text: "It has only read TinyStories, so it knows nothing about construction, contracts or the wider world." },
+              { emoji: "📐", title: "Small size", text: "At 27 million parameters it loses track of facts within a story." },
+              { emoji: "🖥️", title: "Hardware ceiling", text: "A 4 GB card limits it to tens of millions of parameters, far weaker than large commercial or open-source models. Part 9 moves training to a 24 GB+ card or rented GPUs." },
+              { emoji: "❓", title: "Unmeasured accuracy", text: "Question-answering accuracy doesn't exist yet; Part 5b adds the measurement." },
+              { emoji: "🌐", title: "One open question", text: "The plan assumes the company's documents are in English. A model can only read languages that were in its training text, so that has to be confirmed before Part 5a." }
+            ]
+          }
+        ],
+        stack: [
+          { group: "Model & training", items: ["Python", "PyTorch 2.11", "CUDA 12.8", "bfloat16", "AdamW"] },
+          { group: "Data & tooling", items: ["TinyStories", "Own BPE tokenizer", "numpy", "tqdm", "matplotlib"] },
+          { group: "Server", items: ["Python standard library", "Token-by-token streaming", "127.0.0.1 only"] },
+          { group: "Hardware", items: ["RTX 3050 Laptop GPU", "4 GB VRAM", "16 GB RAM", "Windows"] }
+        ]
+      }
+    },
     {
       emoji: "💊",
       title: "Dosely: AI Medication Safety Scanner",
@@ -529,6 +635,7 @@ const siteData = {
     { key: "maven", label: "Maven" },
     { key: "aws", label: "AWS" },
     { key: "machine learning", label: "Machine Learning" },
+    { key: "pytorch", label: "PyTorch" },
     { key: "cuda", label: "CUDA" },
     { key: "mpi", label: "MPI" },
     { key: "parallel computing", label: "Parallel Computing" },

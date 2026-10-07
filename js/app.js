@@ -56,6 +56,12 @@ function initProjectModal() {
   const closeBtn = document.getElementById("pm-close");
   let lastFocused = null;
   let openIndex = null;
+  let stopMotion = null; // undoes the case study's GSAP motion (js/cinema.js)
+
+  function stopCaseMotion() {
+    if (stopMotion) stopMotion();
+    stopMotion = null;
+  }
 
   document.getElementById("projects-grid").addEventListener("click", (e) => {
     const card = e.target.closest(".project-card");
@@ -83,9 +89,11 @@ function initProjectModal() {
   });
 
   // a case study open when the language flips gets rebuilt in place, so the
-  // reader keeps their spot instead of being dropped back to the grid
+  // reader keeps their spot instead of being dropped back to the grid. The
+  // rebuild is shown as it ends up: no replaying motion they've already seen.
   I18N.onChange(() => {
     if (openIndex === null) return;
+    stopCaseMotion();
     const scrolled = panel.scrollTop;
     panel.innerHTML = buildProjectDetails(I18N.data().projects[openIndex]);
     panel.scrollTop = scrolled;
@@ -95,18 +103,23 @@ function initProjectModal() {
     openIndex = index;
     lastFocused = document.activeElement;
     panel.innerHTML = buildProjectDetails(I18N.data().projects[index]);
-    panel.scrollTop = 0;
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
+    // the overlay is what scrolls, and it keeps its offset while hidden, so
+    // without this a case study opens wherever the last one was left
+    overlay.scrollTop = 0;
     // pm-open hides the fixed nav / orb / progress bar so nothing can
     // overlap the popup, whatever the z-index situation is
     document.body.classList.add("pm-open");
     document.body.style.overflow = "hidden";
+    // after "open", so the popup has a layout for ScrollTrigger to measure
+    stopMotion = Cinema.caseStudy(panel, overlay);
     closeBtn.focus();
   }
 
   function closeModal() {
     openIndex = null;
+    stopCaseMotion();
     // pause first — clearing the HTML while a video plays can leave audio running
     panel.querySelectorAll("video").forEach((v) => v.pause());
     overlay.classList.remove("open");
@@ -154,6 +167,41 @@ function buildProjectDetails(p) {
 
   const highlights = bullets(d.highlights);
 
+  // build progress, for work still under construction: a meter for the share
+  // done, then a rail of steps — each "done", "next" or "planned"
+  const road = (d.roadmap && d.roadmap.steps) || [];
+  const roadDone = road.filter((s) => s.status === "done").length;
+  const roadmap = road.length ? `
+    ${d.roadmap.intro ? `<p>${escapeHtml(d.roadmap.intro)}</p>` : ""}
+    <div class="pm-road-meter">
+      <span class="pm-road-bar" aria-hidden="true"><span class="pm-road-fill" style="width: ${(roadDone / road.length) * 100}%"></span></span>
+      <span class="pm-road-count">${escapeHtml(I18N.t("pm.roadDone", { done: roadDone, total: road.length }))}</span>
+    </div>
+    <ol class="pm-road">${road.map((s, i) => `
+      <li class="pm-road-step is-${s.status}">
+        <span class="pm-road-node" aria-hidden="true"></span>
+        ${i < road.length - 1 ? `<span class="pm-road-line" aria-hidden="true"></span>` : ""}
+        <div class="pm-road-body">
+          <span class="pm-road-part">${escapeHtml(I18N.t("pm.part"))} ${escapeHtml(s.part)}</span>
+          <strong>${escapeHtml(s.title)}</strong>
+          ${s.note ? `<span class="pm-road-note">${escapeHtml(s.note)}</span>` : ""}
+        </div>
+        <span class="pm-road-status">${escapeHtml(I18N.t("pm.status." + s.status))}</span>
+      </li>`).join("")}
+    </ol>` : "";
+
+  // something the project wrote itself, prompt in pencil and output in ink.
+  // One span per word so the motion can stream it in; split keeping the
+  // spaces, because the output can open on punctuation (", there was…").
+  // Always English and left-to-right: that's what the model writes.
+  const sample = d.sample ? `
+    <figure class="pm-sample">
+      <div class="pm-sample-page" lang="en" dir="ltr"><span class="pm-sample-prompt">${escapeHtml(d.sample.prompt)}</span><span class="pm-sample-out">${
+        d.sample.text.split(/(\s+)/).map((t) => (!t.trim() ? t : `<span class="w">${escapeHtml(t)}</span>`)).join("")
+      }</span><span class="pm-sample-caret" aria-hidden="true"></span></div>
+      ${d.sample.caption ? `<figcaption>${escapeHtml(d.sample.caption)}</figcaption>` : ""}
+    </figure>` : "";
+
   const stats = (d.stats || []).map((s) => `
     <div class="pm-stat"><b>${escapeHtml(s.value)}</b><span>${escapeHtml(s.label)}</span></div>
   `).join("");
@@ -194,7 +242,9 @@ function buildProjectDetails(p) {
     ${links ? `<div class="pm-links">${links}</div>` : ""}
     ${videos ? `<div class="pm-videos">${videos}</div>` : ""}
     ${block(I18N.t("pm.whatItIs"), overview)}
+    ${block(I18N.t("pm.roadmap"), roadmap)}
     ${block(I18N.t("pm.numbers"), stats ? `<div class="pm-stats">${stats}</div>` : "")}
+    ${block(I18N.t("pm.sample"), sample)}
     ${block(I18N.t("pm.whatItDoes"), highlights ? `<ul class="pm-highlights">${highlights}</ul>` : "")}
     ${block(I18N.t("pm.howItWorks"), steps ? `<ol class="pm-steps">${steps}</ol>` : "")}
     ${sections}
@@ -296,19 +346,24 @@ function renderContent() {
   document.getElementById("marquee-track").innerHTML = row(D.marquee);
   document.getElementById("marquee-track-2").innerHTML = row([...D.marquee].reverse());
 
-  // projects, as frames on a film strip — a card is only rendered as a link
+  // projects, as frames of the reel — a card is only rendered as a link
   // when there's actually something behind it: a case study to open, or a
   // real URL to visit. Anything else is a plain div, so no visitor is
   // invited to click a "view project →" that can't go anywhere.
+  const pad = (i) => String(i + 1).padStart(2, "0");
   const projectsGrid = document.getElementById("projects-grid");
   projectsGrid.innerHTML = D.projects.map((p, i) => {
     const hasUrl = p.link && p.link !== "#";
     const clickable = !!p.details || hasUrl;
-    // "live" is read from the English badge, so it holds in either language
-    const live = /live/i.test(siteData.projects[i].badge || "");
+    // "live" and "under construction" are read from the English badge, so
+    // they hold in either language
+    const badge = siteData.projects[i].badge || "";
+    const live = /live/i.test(badge);
+    const wip = /construction/i.test(badge);
     const inner = `
-      <span class="frame-no">${escapeHtml(I18N.t("work.frame"))} ${String(i + 1).padStart(2, "0")}</span>
-      ${p.badge ? `<span class="project-sticker${live ? " is-live" : ""}"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
+      <span class="frame-no">${escapeHtml(I18N.t("work.frame"))} ${pad(i)}</span>
+      ${p.badge ? `<span class="project-sticker${live ? " is-live" : ""}${wip ? " is-wip" : ""}"><span class="sticker-dot"></span>${escapeHtml(p.badge)}</span>` : ""}
+      <span class="project-num" aria-hidden="true">${pad(i)}</span>
       <span class="project-emoji">${p.emoji}</span>
       <h3 class="project-title">${escapeHtml(p.title)}</h3>
       <p class="project-desc">${escapeHtml(p.description)}</p>
@@ -319,6 +374,12 @@ function renderContent() {
       ? `<a class="project-card" href="${p.link}" target="${hasUrl ? "_blank" : "_self"}" rel="noopener" data-project="${i}">${inner}</a>`
       : `<div class="project-card is-static" data-project="${i}">${inner}</div>`;
   }).join("");
+
+  // the reel's index, beside the screen in the screening (js/cinema.js wires
+  // the jumps). Short names: the part of the title before the colon.
+  document.getElementById("work-index").innerHTML = D.projects.map((p, i) => `
+    <li><button type="button" data-shot="${i}"><b>${pad(i)}</b><span>${escapeHtml(p.title.split(":")[0])}</span></button></li>
+  `).join("");
 
   // certifications, as cinema tickets — they link out to the verification
   // page when there is one
